@@ -4,6 +4,8 @@ import './Login.css'
 import nameIcon from '../Assets/person.png'
 import emailIcon from '../Assets/email.png'
 import passwordIcon from '../Assets/password.png'
+import { Link } from "react-router-dom";
+
 
 
 console.log( "done");
@@ -46,8 +48,12 @@ function Login(){
                 </div> 
             </div>
             <div className="submit-cont">
+            <Link to="/signup">
                 <div className="submit gray">Sign Up</div>
+                </Link>
                 <div className="submit">Login</div>
+                
+               
             </div> 
         </div>
     )

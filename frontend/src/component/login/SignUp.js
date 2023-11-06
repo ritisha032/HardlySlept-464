@@ -4,7 +4,7 @@ import './SignUp.css'
 import nameIcon from '../Assets/person.png'
 import emailIcon from '../Assets/email.png'
 import passwordIcon from '../Assets/password.png'
-
+import { Link } from "react-router-dom";
 
 console.log( "done");
 
@@ -47,7 +47,10 @@ function SignUp(){
             </div>
             <div className="submit-cont">
                 <div className="submit" >Sign Up</div>
+                <Link to="/login">
                 <div className="submit gray">Login</div>
+                </Link>
+               
             </div> 
         </div>
     )
