@@ -1,10 +1,9 @@
-import mongoose from "mongoose";
-import dotenv from "dotenv";
+const mongoose =require("mongoose");
+const dotenv =require("dotenv");
 dotenv.config();
 
 const dbConnect = async () => {
-  mongoose
-    .connect(process.env.DATABASE_URL, {
+  mongoose.connect(process.env.DATABASE_URL, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     })
@@ -17,4 +16,4 @@ const dbConnect = async () => {
       process.exit(1);
     });
 };
-export default dbConnect;
+module.exports=dbConnect;

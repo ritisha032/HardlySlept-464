@@ -1,7 +1,7 @@
-import express from "express";
-import dotenv from "dotenv";
-import morgan from "morgan";
-import dbConnect from "./config/database.js";
+const express =require("express");
+const dotenv = require("dotenv");
+const morgan =require("morgan")
+const dbConnect =require("./config/database.js");
 
 const app=express();
 
@@ -17,12 +17,7 @@ app.get('/',(req,res)=>{
 
 const PORT=process.env.PORT || 5000;
 
-
-
-import authRoutes from "./routes/authRoutes.js";
-app.use("/api/v1",authRoutes);
-
 app.listen(PORT,()=>{
-    console.log(`SERVER RUNNING ON ${PORT}`.bgCyan.white);
+    console.log(`SERVER RUNNING ON ${PORT}`);
 })
 dbConnect();
