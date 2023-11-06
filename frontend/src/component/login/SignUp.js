@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import './Login.css'
+import './SignUp.css'
 import nameIcon from '../Assets/person.png'
 import emailIcon from '../Assets/email.png'
 import passwordIcon from '../Assets/password.png'
@@ -8,7 +8,7 @@ import passwordIcon from '../Assets/password.png'
 
 console.log( "done");
 
-function Login(){
+function SignUp(){
 
     // const [action,setAction]=useState("Login");
 
@@ -24,16 +24,16 @@ function Login(){
         <div className="container">
             {/* <h1>React</h1> */}
             <div className="header">
-                <div className="text">Login</div>
+                <div className="text">Sign Up</div>
                 <div className="underline"></div>
             </div>
 
             <div className="inputs">
 
-               {/* {action=="Login"?<div></div>:<div className="input">
+               <div className="input">
                     <img src={nameIcon} alt/>
                     <input type="text" placeholder="Name" />
-                </div> } */}
+                </div>
 
                 <div className="input">
                     <img src={emailIcon} alt/>
@@ -46,11 +46,11 @@ function Login(){
                 </div> 
             </div>
             <div className="submit-cont">
-                <div className="submit gray">Sign Up</div>
-                <div className="submit">Login</div>
+                <div className="submit" >Sign Up</div>
+                <div className="submit gray">Login</div>
             </div> 
         </div>
     )
 }
 
-export default Login;
+export default SignUp;
