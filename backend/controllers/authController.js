@@ -11,7 +11,8 @@ export const signup=async(req,res)=>
     try{
 
         //fetch details from the request body
-        const{name,email,password}=req.body;
+        const{name,email,password,password1}=req.body;
+       // console.log(name,email,password,password1);
 
         //check if an user already exists with the given credentials
         const existingUser=await User.findOne({email});
@@ -23,15 +24,20 @@ export const signup=async(req,res)=>
             });
         }
 
-        //hash the password
-       
         const hashedPassword=await hashPassword(password);
 
-        //create user with the given data
-        const user=await new User({
-            name,email,password:hashedPassword
-        }).save();
-
+            //create user with the given data
+            const user=await new User({
+                name,email,password:hashedPassword
+            }).save();
+    
+            return res.status(200).json({
+                success:true,
+                message:"user created successfully",
+                user
+            });
+    
+        
         return res.status(200).json({
             success:true,
             message:"user created successfully",
