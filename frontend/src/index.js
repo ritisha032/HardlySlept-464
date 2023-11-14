@@ -14,6 +14,8 @@ import SignUp from './component/login/SignUp';
 import Homepage from './component/login/HomePage';
 import { AuthProvider } from "./context/auth";
 import Lobby from './component/Game/Lobby';
+import { ToastContainer } from "react-toastify";
+
 
 
 const router = createBrowserRouter([
@@ -44,9 +46,10 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <AuthProvider>
-        <React.StrictMode>
+        
     <RouterProvider router={router}/>
-  </React.StrictMode>
+    <ToastContainer/>
+  
   </AuthProvider>
 
 );
