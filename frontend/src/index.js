@@ -12,11 +12,18 @@ import {
 import Login from './component/login/Login';
 import SignUp from './component/login/SignUp';
 import Homepage from './component/login/HomePage';
+import { AuthProvider } from "./context/auth";
+import Lobby from './component/Game/Lobby';
+
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Login/>,
+  },
+  {
+    path: "/*",
+    element: <Lobby/>,
   },
   {
     path: "/login",
@@ -36,9 +43,12 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  <AuthProvider>
+        <React.StrictMode>
     <RouterProvider router={router}/>
   </React.StrictMode>
+  </AuthProvider>
+
 );
 
 // If you want to start measuring performance in your app, pass a function
