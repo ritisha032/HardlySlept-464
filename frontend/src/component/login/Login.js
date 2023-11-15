@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 
 import './Login.css'
-import nameIcon from '../Assets/person.png'
 import emailIcon from '../Assets/email.png'
 import passwordIcon from '../Assets/password.png'
 import { Link } from "react-router-dom";
@@ -12,28 +11,33 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 
-console.log( "done");
+console.log("done");
 
 function Login(){
 
-    
     const[email,setEmail]=useState("");
     const[password,setPassword]=useState("");
     const [auth,setAuth]=useAuth('');
-
-
+    const [formValues,setFormValues]=useState({
+        email:'',
+        password:'',
+    });
+    const [formErrors, setFormErrors] = useState({});
+    const [isSubmit, setIsSubmit] = useState(false);
     const navigate=useNavigate();
-    
-    //const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
+        console.log(formErrors.email);
+        console.log(formErrors.password);
         e.preventDefault();
+
+        setIsSubmit(true);
+        setFormErrors(validate(formValues));
     
         try {
           const res = await axios.post(
             `${process.env.REACT_APP_API}/api/v1/login`,
-            {email,password}
-            
+            {email,password} 
           );
     
           if (res && res.data.success) {
@@ -57,12 +61,47 @@ function Login(){
             
         }
       };
-    
 
+     const handleChange=(e)=>{
+        if(e.target.name=='email') setEmail(e.target.value);
+        if(e.target.name=='password') setPassword(e.target.password);
 
+        console.log(email+" "+password);
+        console.log(formValues);
+        setFormValues({...formValues,[e.target.name]:e.target.value});
+    };
+
+     const validate=(values)=>{
+
+        const errors = {};
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+
+        if (!values.email) {
+        errors.email = "Email is required!";
+        } else if (!regex.test(values.email)) {
+        errors.email = "This is not a valid email format!";
+        }
+        if (!values.password) {
+        errors.password = "Password is required";
+        } else if (values.password.length < 4) {
+        errors.password = "Password must be more than 4 characters";
+        } else if (values.password.length > 10) {
+        errors.password = "Password cannot exceed more than 10 characters";
+        }
+
+        return errors;
+    }
+
+     useEffect(() => {
+        if (Object.keys(formErrors).length === 0 && isSubmit) {
+        console.log(formValues);
+        }
+    }, [formErrors]);
+      
     return (
         <div className="container">
-            {/* <h1>React</h1> */}
+
+            <pre>{JSON.stringify(formValues,undefined,2)}</pre>
             <div className="header">
                 <div className="text">Login</div>
                 <div className="underline"></div>
@@ -70,29 +109,36 @@ function Login(){
 
             <div className="inputs">
 
-               {/* {action=="Login"?<div></div>:<div className="input">
-                    <img src={nameIcon} alt/>
-                    <input type="text" placeholder="Name" />
-                </div> } */}
-
                 <div className="input">
                     <img src={emailIcon} alt/>
-                    <input type="email" placeholder="Email" value={email}
-                    onChange={(e) => setEmail(e.target.value)} />
+                    <input 
+                        type="email" 
+                        name="email"
+                        placeholder="Email" 
+                        value={formValues.email}
+                        onChange={handleChange} 
+                    />
                 </div> 
+                {formErrors.email!=undefined?<p>{formErrors.email}</p>:null}
 
                 <div className="input">
                     <img src={passwordIcon} alt/>
-                    <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)}/>
+                    <input 
+                        type="password"
+                        name="password" 
+                        placeholder="Password" 
+                        value={formValues.password}
+                        onChange={handleChange} 
+                    />
                 </div> 
+                {formErrors.password!=undefined?<p>{formErrors.password}</p>:null}
+
             </div>
             <div className="submit-cont">
             <Link to="/signup">
                 <div className="submit gray">Sign Up</div>
                 </Link>
-                <button type="submit" className="submit" onClick={handleSubmit}>Login</button>
-                
-               
+                <button type="submit" className="submit" onClick={handleSubmit}>Login</button> 
             </div> 
         </div>
     )
