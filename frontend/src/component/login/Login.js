@@ -6,7 +6,11 @@ import emailIcon from '../Assets/email.png'
 import passwordIcon from '../Assets/password.png'
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useAuth
+ } from "../../context/auth";
 import axios from "axios";
+import { toast } from "react-toastify";
+
 
 console.log( "done");
 
@@ -15,6 +19,9 @@ function Login(){
     
     const[email,setEmail]=useState("");
     const[password,setPassword]=useState("");
+    const [auth,setAuth]=useAuth('');
+
+
     const navigate=useNavigate();
     
     //const navigate = useNavigate();
@@ -26,17 +33,28 @@ function Login(){
           const res = await axios.post(
             `${process.env.REACT_APP_API}/api/v1/login`,
             {email,password}
+            
           );
     
           if (res && res.data.success) {
-                alert("logged in successfully");
-                navigate("/HomePage");
+                toast.success("Logged in successfully");
+                
+                setAuth({
+                    ...auth,
+                    user:res.data.user,
+                    token:res.data.token,
+          
+                  });
+                  localStorage.setItem('auth',JSON.stringify(res.data));
+        	    navigate("/HomePage");
                 
           } else {
+            
                 alert("not logged in")
           }
         } catch (erorr) {
-            alert("Something Went Wrong");
+            toast.warning("Something went wrong");
+            
         }
       };
     

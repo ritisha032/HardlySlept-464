@@ -2,17 +2,17 @@
 import './App.css';
 import Login from './component/login/Login.js'
 import SignUp from './component/login/SignUp.js'
-import Homepage from './component/login/HomePage.js';
-import {Routes,Route} from "react-router-dom"
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Login/>}></Route>
-      <Route path="/HomePage" element={<Homepage/>}></Route>
+    <div>
+              <Login/>
+      <SignUp/>
+    </div>
 
-    </Routes>
   );
 }
 
