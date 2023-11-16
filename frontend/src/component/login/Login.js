@@ -64,7 +64,7 @@ function Login(){
 
      const handleChange=(e)=>{
         if(e.target.name=='email') setEmail(e.target.value);
-        if(e.target.name=='password') setPassword(e.target.password);
+        if(e.target.name=='password') setPassword(e.target.value);
 
         console.log(email+" "+password);
         console.log(formValues);
