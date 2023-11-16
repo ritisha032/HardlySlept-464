@@ -12,8 +12,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 
-console.log( "done");
-
 function Login(){
 
     

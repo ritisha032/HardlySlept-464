@@ -7,14 +7,14 @@ import passwordIcon from "../Assets/password.png";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
-console.log("done");
+import { toast } from "react-toastify";
 
 function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password1, setPassword1] = useState("");
+  const [username, setUserName] = useState("");
 
   const navigate = useNavigate();
 
@@ -23,27 +23,29 @@ function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!name || !email || !password || !username) {
+      toast.warning("Please fill out all fields");
+    }
     if (password != password1) {
-      alert("passwords do not match");
+      toast.warning("Passwords don't match");
       setPassword("");
       setPassword1("");
     } else {
       try {
         const res = await axios.post(
           `${process.env.REACT_APP_API}/api/v1/signup`,
-          { name, email, password, password1 }
+          { name, email, username,password,password1}
         );
 
-        if (res.message == "passwords do not match")
-          alert("passwords do not match");
+        console.log(res);
         if (res && res.data.success) {
-          alert("registered successfully");
+          toast.success("registered successfully");
           navigate("/login");
         } else {
-          alert("not registered");
+          toast.warning(res.data.message);
         }
-      } catch (erorr) {
-        alert("Something Went Wrong");
+      } catch (error) {
+        toast.warning(error);
       }
     }
   };
@@ -64,6 +66,7 @@ function SignUp() {
             placeholder="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            required
           />
         </div>
 
@@ -74,6 +77,18 @@ function SignUp() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="input">
+          <img src={nameIcon} alt="b" />
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUserName(e.target.value)}
+            required
           />
         </div>
 
@@ -84,6 +99,7 @@ function SignUp() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
         </div>
 
@@ -94,6 +110,7 @@ function SignUp() {
             placeholder="Confirm Password"
             value={password1}
             onChange={(e) => setPassword1(e.target.value)}
+            required
           />
         </div>
       </div>

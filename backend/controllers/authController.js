@@ -11,46 +11,57 @@ export const signup=async(req,res)=>
     try{
 
         //fetch details from the request body
-        const{name,email,password,password1}=req.body;
+        const{name,email,username,password,password1}=req.body;
+         console.log(name,email,password,username);
        // console.log(name,email,password,password1);
 
         //check if an user already exists with the given credentials
+        const existingUserName=await User.findOne({username})
+
+        if(existingUserName)
+        {
+            
+            return res.json({
+        
+                success:false,
+                message:"Username already registered",
+            }).status(204);
+            
+
+        }
         const existingUser=await User.findOne({email});
 
         if(existingUser){
-            return res.status(400).json({
+            
+            res.json({
+                
                 success:false,
-                message:"user already exists",
-            });
+                message:"Email id already registered",
+            }).status(204);
+            return res;
         }
 
         const hashedPassword=await hashPassword(password);
 
             //create user with the given data
             const user=await new User({
-                name,email,password:hashedPassword
+                name,email,username,password:hashedPassword
             }).save();
     
-            return res.status(200).json({
+            return res.json({
                 success:true,
                 message:"user created successfully",
                 user
-            });
-    
-        
-        return res.status(200).json({
-            success:true,
-            message:"user created successfully",
-            user
-        });
+            }).status(200);
+
     }
     catch(err){
         console.error(err);
 
-        return res.status(500).json({
+        return res.json({
             success:false,
             message:"user cannot be registered",
-        });
+        }).status(500);
     }
 }
 export const login=async(req,res)=>{
@@ -58,24 +69,24 @@ export const login=async(req,res)=>{
         const {email,password}=req.body;
 
         if(!email || !password){
-            return res.status(400).json({
+            return res.json({
                 success:false,
                 message:"Invalid credentials",
-            })
+            }).status(400);
         }
         const user=await User.findOne({email});
         if(!user){
-            return res.status(400).json({
+            return res.json({
                 success:false,
                 message:"Invalid Password",
-            })
+            }).status(400);
         }
         const match=await bcrypt.compare(password,user.password);
         if(!match){
-            return res.status(200).json({
+            return res.json({
                 success:false,
                 message:"Invalid Password",
-            })
+            }).status(200);
         }
 
         //create a JWT TOKEN
@@ -85,7 +96,7 @@ export const login=async(req,res)=>{
        }
         const token=await JWT.sign(payload,process.env.JWT_SECRET,{expiresIn:'7d'});
         
-        res.status(200).json({
+        res.json({
             success:true,
             message:"Logged iN SUCCESSFULLY",
             user:{
@@ -93,16 +104,18 @@ export const login=async(req,res)=>{
                 email:user.email,
             },
             token,
-            });
+            }).status(200);
     }
     
     catch(err){
         console.error(err);
 
-        return res.status(500).json({
+        return res.json({
             success:false,
             message:"user cannot be loggedin",
-        });
+        }).status(500);
     
 }
 }
+
+    
