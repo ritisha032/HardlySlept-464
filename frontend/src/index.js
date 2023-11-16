@@ -15,6 +15,9 @@ import Homepage from './component/login/HomePage';
 import { AuthProvider } from "./context/auth";
 import Lobby from './component/Game/Lobby';
 import { ToastContainer } from "react-toastify";
+import GameContextProvider from './context/GameContextProvider';
+import UserContext from './context/UserContext';
+import UserContextProvider from './context/UserContextProvider';
 
 
 
@@ -46,10 +49,12 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <AuthProvider>
-        
+  <GameContextProvider>  
+    <UserContextProvider>  
     <RouterProvider router={router}/>
     <ToastContainer/>
-  
+    </UserContextProvider> 
+ </GameContextProvider>
   </AuthProvider>
 
 );
