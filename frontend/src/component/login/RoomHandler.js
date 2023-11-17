@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {io} from 'socket.io-client';
 import GameContext from '../../context/GameContext';
 import UserContext from '../../context/UserContext';
-
+import { toast } from "react-toastify";
 const socket = io.connect('http://localhost:3001');
 
 
@@ -19,28 +19,43 @@ const RoomHandler = () => {
     setRoom(e.target.value);
     };
 
-    const createRoom = (type) =>{
+    useEffect(()=>{
+      if(game!=null){
+        console.log("game data = " + game);
+        navigate(`/${game.roomNo}`);
+      }
+      
+    },[game])
+    const createRoom = async (type) =>{
         console.log(user + "in create room call")
-        socket.emit("create_room",{type:type,user:user});
+        await socket.emit("create_room",{type:type,user:user});
         socket.on("room_created", (data) => {
-          setGame(data)
-          console.log(data);
-          console.log("game data = " + game);
-          navigate(`/${data.roomNo}`);
+            setGame(data) // runs use State
+            console.log(data);
         })
-
     };
-    const joinRoom = (type) =>{
 
+    const joinRoom = async (type) =>{
+      await socket.emit("join_room",{type:type,user:user,room:room});
+      socket.on("room_created",(data) => {
+          setGame(data) // runs use State
+          console.log(data);
+      })
     }
+    socket.on("no_game",(data)=>{
+      toast.warning(data.message);
+    })
+    socket.on("game_joined",(data)=>{
+      setGame(data);
+    })
 
   return (
     <div>
   <button id="publicButton" onClick={()=>createRoom("public")}>Create Public Room</button>
   <button id="privateButton" onClick={()=>createRoom("private")}>Create Private Room</button>
   <input placeholder="roomNo" value={room} onChange={handleChange} />
-  <button id="publicButton" onClick={()=>joinRoom("public")}>Create Public Room</button>
-  <button id="privateButton" onClick={()=>joinRoom("private")}>Create Private Room</button>
+  <button id="publicButton" onClick={()=>joinRoom("private")}>Join Private Room</button>
+  <button id="privateButton" onClick={()=>joinRoom("public")}>Join Public Room</button>
     </div>
   )
 }

@@ -108,45 +108,29 @@ io.on("connection", (socket) => {
  
   //creating room public and private
   socket.on("create_room",(data)=>{
-    console.log("a1");
     const rm = guid(); // make sure guid is unique
-    console.log("a2");
     socket.join(rm);
     console.log(data.user);
     room[data.type].push(rm);
-    console.log("a4");
     game[rm]={
               players:[{user:data.user,id:socket,active:true}],
-              player_names:[data.user],
-              TotalRounds:3,
-              currentRound:1,
-              TotalTime:30,
-              CurrentTime:30,
-              drawer:null,
-              word:null,
-              roomNo:rm,
               admin : {user:data.user,id:socket},
-              admin_name : data.user,
-              status :"Lobby",
-              type : data.type
+              gameData : {
+                player_names:{},
+                TotalRounds:3,
+                currentRound:1,
+                TotalTime:30,
+                CurrentTime:30,
+                drawer:null,
+                word:null,
+                roomNo:rm,
+                admin_name : data.user,
+                status :"Lobby",
+                type : data.type,
+              }
             };
-    console.log("a5");
-    console.log(game[rm]);
-    const obj={
-              player_names : game[rm].player_names,
-              TotalRounds : game[rm].TotalRounds,
-              currentRound : game[rm].currentRound,
-              TotalTime : game[rm].TotalTime,
-              CurrentTime : game[rm].CurrentTime,
-              drawer : game[rm].drawer,
-              word : game[rm].word,
-              roomNo : game[rm].roomNo ,
-              admin_name : game[rm].admin_name,
-              status : game[rm].status,
-              type : game[rm].type
-    }
-    socket.emit("room_created",obj);
-    console.log("a6");
+    game[rm].gameData.player_names[data.user]={active:true,score:0};
+    socket.emit("room_created",game[rm].gameData);
     //adding listner to those sockets
     socket.on("start_game",data=>{
       if(data.room in game){
@@ -155,13 +139,40 @@ io.on("connection", (socket) => {
           startGame(game[data.room]);
       }
     })
+    console.log(game[rm])
   })
 
 
   socket.on("join_room",(data)=>{
   //data has type of room , username , roomnumber if the room is private
-    if(data.room in game){
-      socket.join(data.room)
+    if(data.type=="public"){
+      if(room["public"].length==0){
+        socket.emit("no_game",{message:"No Public room available to join"});
+      }
+      else{
+          //randomly assign a game to the socket
+      }
+    }
+    else{
+      if(data.room in game){
+        
+        const arr = game[data.room].gameData.player_names;
+        console.log(arr)
+        if((Object.keys(arr).find((ele)=>ele==data.user))==undefined){
+          socket.join(data.room)
+          game[data.room].players.push({user:data.user,id:socket,active:true})
+          game[data.room].gameData.player_names[data.user]={active:true,score:false};
+          console.log("adding the new player");
+          io.to(data.room).emit("game_joined",game[data.room].gameData)
+        }
+        else{
+          socket.emit("no_game",{message:"user is already in the game"})
+        }
+        
+      }
+      else{
+        socket.emit("no_game",{message:"No room with this code"});
+      }
     }
 
   })

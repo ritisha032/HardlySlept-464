@@ -9,7 +9,7 @@ const Lobby = () => {
   return (
     <div><h1>{game.type}</h1>
 
-     { game.player_names.map((data,index)=>{
+     { Object.keys(game.player_names).map((data,index)=>{
         return <Player user={data}/>
       })}
       <Logout></Logout>
