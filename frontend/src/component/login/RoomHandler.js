@@ -8,11 +8,10 @@ import { toast } from "react-toastify";
 import SocketContext from '../../context/SocketContext';
 const socketTemp = io.connect('http://localhost:3001');
 
-
 const RoomHandler = () => {
-    const {setSocket,socket} =useContext(SocketContext);
+    
     const navigate=useNavigate();
-    setSocket(socketTemp);
+    const {setSocket,socket} =useContext(SocketContext);
     const {game,setGame} = useContext(GameContext)
     const {user} = useContext(UserContext)
     //var username = user
@@ -22,6 +21,8 @@ const RoomHandler = () => {
     };
 
     useEffect(()=>{
+      
+      setSocket(socketTemp);
       if(socket!=null){
         socket.on("no_game",(data)=>{
           toast.warning(data.message);

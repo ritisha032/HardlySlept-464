@@ -122,7 +122,7 @@ io.on("connection", (socket) => {
                 TotalTime:30,
                 CurrentTime:30,
                 drawer:null,
-                word:null,
+                word:"09sdfsvclks2111ik",
                 roomNo:rm,
                 admin_name : data.user,
                 status :"Lobby",
@@ -142,7 +142,7 @@ io.on("connection", (socket) => {
     console.log(game[rm])
   })
 
-
+  //join a room
   socket.on("join_room",(data)=>{
   //data has type of room , username , roomnumber if the room is private
     if(data.type=="public"){
@@ -176,6 +176,22 @@ io.on("connection", (socket) => {
     }
 
   })
+
+  //send message to everyone in the channel
+  socket.on("send_message",(data)=>{
+    var check=0;
+    if(data.room in game && undefined != game[data.room].players.find((ele)=>{return ele.user==data.user})){
+        console.log(data.message+"=="+game[data.room].gameData.word);
+        if(data.message.toLowerCase()===game[data.room].gameData.word.toLowerCase())check=1;
+        socket.to(data.room).emit("receive_message",{...data,check});
+        socket.emit("receive_message",{...data,check});
+        console.log(check);
+    }
+    else{
+        socket.emit("feedback","Not a Member, please join");
+    }
+    
+})
  
 });
 

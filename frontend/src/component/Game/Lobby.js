@@ -5,6 +5,7 @@ import GameContext from '../../context/GameContext'
 import Player from './Player'
 import SocketContext from '../../context/SocketContext'
 import UserContext from '../../context/UserContext'
+import ChatBox from './ChatBox'
 
 const Lobby = () => {
   const {game} = useContext(GameContext)
@@ -22,6 +23,7 @@ const Lobby = () => {
       })}
       <Logout></Logout>
       {(user==game.admin_name)? <button onClick={()=>startGame}>StartGame</button>:<div></div>}
+      <ChatBox/>
     </div>
   )
 }
