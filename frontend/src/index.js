@@ -18,6 +18,7 @@ import { ToastContainer } from "react-toastify";
 import GameContextProvider from './context/GameContextProvider';
 import UserContext from './context/UserContext';
 import UserContextProvider from './context/UserContextProvider';
+import SocketContextProvider from './context/SocketContextProvider';
 
 
 
@@ -50,9 +51,11 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <AuthProvider>
   <GameContextProvider>  
-    <UserContextProvider>  
-    <RouterProvider router={router}/>
-    <ToastContainer/>
+    <UserContextProvider>
+      <SocketContextProvider>
+        <RouterProvider router={router}/>
+        <ToastContainer/>
+      </SocketContextProvider>
     </UserContextProvider> 
  </GameContextProvider>
   </AuthProvider>
