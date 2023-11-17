@@ -11,7 +11,7 @@ const socket = io.connect('http://localhost:3001');
 
 const RoomHandler = () => {
     const navigate=useNavigate();
-    const {setGame} = useContext(GameContext)
+    const {game,setGame} = useContext(GameContext)
     const {user} = useContext(UserContext)
     //var username = user
     const [room,setRoom] = useState("");
@@ -20,10 +20,12 @@ const RoomHandler = () => {
     };
 
     const createRoom = (type) =>{
+        console.log(user + "in create room call")
         socket.emit("create_room",{type:type,user:user});
         socket.on("room_created", (data) => {
           setGame(data)
           console.log(data);
+          console.log("game data = " + game);
           navigate(`/${data.roomNo}`);
         })
 

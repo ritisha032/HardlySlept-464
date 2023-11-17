@@ -1,14 +1,14 @@
-import React, { useState,useEffect } from "react";
+import React, { useState,useEffect, useContext } from "react";
 
 import './Login.css'
 import emailIcon from '../Assets/email.png'
 import passwordIcon from '../Assets/password.png'
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useAuth
- } from "../../context/auth";
+import { useAuth} from "../../context/auth";
 import axios from "axios";
 import { toast } from "react-toastify";
+import UserContext from "../../context/UserContext";
 
 
 
@@ -25,6 +25,7 @@ function Login(){
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false);
     const navigate=useNavigate();
+    const {user,setUser} = useContext(UserContext)
 
     const handleSubmit = async (e) => {
         console.log(formErrors.email);
@@ -49,6 +50,11 @@ function Login(){
                     token:res.data.token,
           
                   });
+                  const username = res.data.user.username;
+                  setUser(username);
+                  console.log(auth);
+                  console.log("setUSer to " + username);
+                  console.log("trying to read from context "+user);
                   localStorage.setItem('auth',JSON.stringify(res.data));
         	    navigate("/HomePage");
                 

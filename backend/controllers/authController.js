@@ -78,7 +78,7 @@ export const login=async(req,res)=>{
         if(!user){
             return res.json({
                 success:false,
-                message:"Invalid Password",
+                message:"Invalid Email",
             }).status(400);
         }
         const match=await bcrypt.compare(password,user.password);
@@ -102,6 +102,7 @@ export const login=async(req,res)=>{
             user:{
                 name:user.name,
                 email:user.email,
+                username:user.username
             },
             token,
             }).status(200);
