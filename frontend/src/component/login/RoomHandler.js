@@ -5,12 +5,14 @@ import {io} from 'socket.io-client';
 import GameContext from '../../context/GameContext';
 import UserContext from '../../context/UserContext';
 import { toast } from "react-toastify";
-const socket = io.connect('http://localhost:3001');
-
+import SocketContext from '../../context/SocketContext';
+const socketTemp = io.connect('http://localhost:3001');
 
 
 const RoomHandler = () => {
+    const {setSocket,socket} =useContext(SocketContext);
     const navigate=useNavigate();
+    setSocket(socketTemp);
     const {game,setGame} = useContext(GameContext)
     const {user} = useContext(UserContext)
     //var username = user
@@ -18,6 +20,18 @@ const RoomHandler = () => {
     const handleChange=(e)=>{
     setRoom(e.target.value);
     };
+
+    useEffect(()=>{
+      if(socket!=null){
+        socket.on("no_game",(data)=>{
+          toast.warning(data.message);
+        })
+        socket.on("game_joined",(data)=>{
+          setGame(data);
+        })
+      }
+    },[socket])
+
 
     useEffect(()=>{
       if(game!=null){
@@ -42,20 +56,17 @@ const RoomHandler = () => {
           console.log(data);
       })
     }
-    socket.on("no_game",(data)=>{
-      toast.warning(data.message);
-    })
-    socket.on("game_joined",(data)=>{
-      setGame(data);
-    })
+    
 
   return (
     <div>
+    { (socket==null)?<div>Loading</div>:<div>
   <button id="publicButton" onClick={()=>createRoom("public")}>Create Public Room</button>
   <button id="privateButton" onClick={()=>createRoom("private")}>Create Private Room</button>
   <input placeholder="roomNo" value={room} onChange={handleChange} />
   <button id="publicButton" onClick={()=>joinRoom("private")}>Join Private Room</button>
   <button id="privateButton" onClick={()=>joinRoom("public")}>Join Public Room</button>
+    </div>}
     </div>
   )
 }

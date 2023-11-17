@@ -132,7 +132,7 @@ io.on("connection", (socket) => {
     game[rm].gameData.player_names[data.user]={active:true,score:0};
     socket.emit("room_created",game[rm].gameData);
     //adding listner to those sockets
-    socket.on("start_game",data=>{
+    socket.on("start_game",(data)=>{
       if(data.room in game){
           game[data.room].status = "Running";
           io.to(data.room).emit()
