@@ -13,6 +13,7 @@ const Lobby = () => {
   const {user} = useContext(UserContext)
   const startGame = () =>{
       socket.emit("start_game",{room : game.roomNo})
+      console.log("fired start game")
   }
 
   return (
@@ -22,7 +23,7 @@ const Lobby = () => {
         return <Player user={data}/>
       })}
       <Logout></Logout>
-      {(user==game.admin_name)? <button onClick={()=>startGame}>StartGame</button>:<div></div>}
+      {(user==game.admin_name)? <button onClick={()=>{startGame()}}>StartGame</button>:<div></div>}
       <ChatBox/>
     </div>
   )

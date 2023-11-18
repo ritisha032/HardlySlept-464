@@ -21,13 +21,13 @@ const RoomHandler = () => {
     };
 
     useEffect(()=>{
-      
+      if(socket==null)
       setSocket(socketTemp);
       if(socket!=null){
         socket.on("no_game",(data)=>{
           toast.warning(data.message);
         })
-        socket.on("game_joined",(data)=>{
+        socket.on("game_data",(data)=>{
           setGame(data);
         })
       }
@@ -44,10 +44,10 @@ const RoomHandler = () => {
     const createRoom = async (type) =>{
         console.log(user + "in create room call")
         await socket.emit("create_room",{type:type,user:user});
-        socket.on("room_created", (data) => {
-            setGame(data) // runs use State
-            console.log(data);
-        })
+        // socket.on("room_created", (data) => {
+        //     setGame(data) // runs use State
+        //     console.log(data);
+        // })
     };
 
     const joinRoom = async (type) =>{
