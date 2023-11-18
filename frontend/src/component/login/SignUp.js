@@ -10,7 +10,13 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 function SignUp() {
-  const [name, setName] = useState("");
+  function generateUniqueUsername(username) {
+    const randomDigits = Math.floor(1000 + Math.random() * 9000);
+    const uniqueUsername = `${username}`+"_"+`${randomDigits}`;
+    return uniqueUsername;
+  }
+  
+  const [name, setName] = useState("hello");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password1, setPassword1] = useState("");
@@ -28,7 +34,7 @@ function SignUp() {
 
 
   const handleSubmit = async (e) => {
-    console.log("yes");
+    
     e.preventDefault();
     setIsSubmit(true);
     setFormErrors(validate(formValues));
@@ -53,6 +59,13 @@ function SignUp() {
           navigate("/login");
         } else {
           toast.warning(res.data.message);
+          if(res.data.message === "Username already registered")
+          {
+            toast.success(generateUniqueUsername(username)+" is available");
+            
+
+            //console.log(generateUniqueUsername(username));
+          }
         }
       } catch (error) {
         toast.warning(error);
@@ -68,7 +81,7 @@ function SignUp() {
       if(e.target.name=='username') setUsername(e.target.value)
 
       console.log(name+" "+email+" "+password+" "+password1);
-      console.log(formValues);
+     // console.log(formValues);
       setFormValues({...formValues,[e.target.name]:e.target.value});
   };
 
