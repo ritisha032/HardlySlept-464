@@ -27,7 +27,7 @@ var game={};
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: process.env.REACT,
     methods: ["GET", "POST"],
   },
 });
@@ -221,7 +221,7 @@ function S4() {
 app.get("/", (req, res) => {
   res.send(`<h1>Welcome to Scribble Game Backend</h1>`);
 });
-server.listen(3001, () =>{
+server.listen(process.env.Socket, () =>{
     console.log("Our Sockeet io server");
   })
   
