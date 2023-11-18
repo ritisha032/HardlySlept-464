@@ -8,6 +8,7 @@ import cors from "cors";
 //<!----for socket.io server----!>
 import http from "http";
 import {Server} from "socket.io";
+import { isObjectIdOrHexString } from "mongoose";
 //<!----for socket.io server----!>
 
 const app = express();
@@ -44,14 +45,15 @@ async function startGame(obj){
       console.log("setting word");
       console.log(data.word);
   }
-  for(var i=0;i<obj.TotalRounds;i++){
+  for(var i=0;i<obj.gameData.TotalRounds;i++){
       console.log("round"+i);
       //giving turns to each player
       for(var j=0;j<obj.players.length;j++){
           //setting timer of the round
-          obj.CurrentTime=obj.TotalTime;
+          obj.gameData.CurrentTime=obj.gameData.TotalTime;
           //if the player is not active, go to next player
-          if(obj.players[j].active==false)continue;
+          const userturn = obj.players[j].user;
+          if(obj.gameData.player_names[userturn].active==false)continue;
           //Give option to drawer to select a word out of the choices within 15 sec
           var option = [];
           option.push(change());
@@ -60,7 +62,7 @@ async function startGame(obj){
           obj.players[j].id.emit("send_options",option);
           try{
             console.log("in loop");
-            console.log(obj.players.length);
+            //sconsole.log(obj.gameData.players.length);
             //display the number of words to guess to the guessers
             //send three words to the drawer
             obj.players[j].id.emit("feedback","Choose word");
@@ -72,7 +74,11 @@ async function startGame(obj){
             await promise1
           
             //close the listener for the drawer
-            obj.players[j].id.removeAllListeners("word_chosen");  
+            obj.players[j].id.removeAllListeners("word_chosen");
+            obj.gameData.hint = obj.word.length;
+            io.emit("send_hint",obj.word.length);
+            obj.players[j].id.emit("send_hint",obj.word);
+              
           }
             catch(j){
               console.log(j)
@@ -80,15 +86,15 @@ async function startGame(obj){
           //Timer 
           var promise2 = new Promise((resolve,reject)=>{
               var timerDecrease = setInterval(()=>{
-                  obj.CurrentTime--;     
-                  io.to(obj.roomNo).emit("timer_change",obj.CurrentTime);
-                  if(obj.CurrentTime<=0)
+                  obj.gameData.CurrentTime--;     
+                  io.to(obj.gameData.roomNo).emit("timer_change",obj.gameData.CurrentTime);
+                  if(obj.gameData.CurrentTime<=0)
                       {
                           clearInterval(timerDecrease);
                           resolve();
                       }
-                  console.log(obj.CurrentTime);
-                  console.log(obj.CurrentTime<=0)
+                  console.log(obj.gameData.CurrentTime);
+                  console.log(obj.gameData.CurrentTime<=0)
               },1000); 
           })
           await promise2;
@@ -98,7 +104,7 @@ async function startGame(obj){
       } 
   }
   console.log("game over");
-  obj.status = "Finished";
+  obj.gameData.status = "Finished";
   //1-timer
   //when timer runs out give the next player the turn
 }
@@ -113,8 +119,9 @@ io.on("connection", (socket) => {
     console.log(data.user);
     room[data.type].push(rm);
     game[rm]={
-              players:[{user:data.user,id:socket,active:true}],
+              players:[{user:data.user,id:socket}],
               admin : {user:data.user,id:socket},
+              word:"09sdfsvclks2111ik",
               gameData : {
                 player_names:{},
                 TotalRounds:3,
@@ -122,27 +129,28 @@ io.on("connection", (socket) => {
                 TotalTime:30,
                 CurrentTime:30,
                 drawer:null,
-                word:null,
                 roomNo:rm,
+                hint:"",
                 admin_name : data.user,
                 status :"Lobby",
-                type : data.type,
+                type : data.type
               }
             };
     game[rm].gameData.player_names[data.user]={active:true,score:0};
-    socket.emit("room_created",game[rm].gameData);
+    socket.emit("game_data",game[rm].gameData);
     //adding listner to those sockets
     socket.on("start_game",(data)=>{
       if(data.room in game){
-          game[data.room].status = "Running";
-          io.to(data.room).emit()
+          game[data.room].gameData.status = "Running";
+          io.to(data.room).emit("game_data",game[data.room].gameData)
           startGame(game[data.room]);
       }
+      console.log("started game")
     })
     console.log(game[rm])
   })
 
-
+  //join a room
   socket.on("join_room",(data)=>{
   //data has type of room , username , roomnumber if the room is private
     if(data.type=="public"){
@@ -163,7 +171,7 @@ io.on("connection", (socket) => {
           game[data.room].players.push({user:data.user,id:socket,active:true})
           game[data.room].gameData.player_names[data.user]={active:true,score:false};
           console.log("adding the new player");
-          io.to(data.room).emit("game_joined",game[data.room].gameData)
+          io.to(data.room).emit("game_data",game[data.room].gameData)
         }
         else{
           socket.emit("no_game",{message:"user is already in the game"})
@@ -176,6 +184,22 @@ io.on("connection", (socket) => {
     }
 
   })
+
+  //send message to everyone in the channel
+  socket.on("send_message",(data)=>{
+    var check=0;
+    if(data.room in game && undefined != game[data.room].players.find((ele)=>{return ele.user==data.user})){
+        console.log(data.message+"=="+game[data.room].word);
+        if(data.message.toLowerCase()===game[data.room].word.toLowerCase())check=1;
+        socket.to(data.room).emit("receive_message",{...data,check});
+        socket.emit("receive_message",{...data,check});
+        console.log(check);
+    }
+    else{
+        socket.emit("feedback","Not a Member, please join");
+    }
+    
+})
  
 });
 

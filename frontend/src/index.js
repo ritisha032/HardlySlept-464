@@ -19,6 +19,7 @@ import GameContextProvider from './context/GameContextProvider';
 import UserContext from './context/UserContext';
 import UserContextProvider from './context/UserContextProvider';
 import SocketContextProvider from './context/SocketContextProvider';
+import GameRoom from './component/Game/GameRoom';
 
 
 
@@ -29,7 +30,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/*",
-    element: <Lobby/>,
+    element: <GameRoom/>,
   },
   {
     path: "/login",
