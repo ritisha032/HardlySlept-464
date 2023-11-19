@@ -74,8 +74,8 @@ function Login(){
         if(e.target.name=='email') setEmail(e.target.value);
         if(e.target.name=='password') setPassword(e.target.value);
 
-        console.log(email+" "+password);
-        console.log(formValues);
+       // console.log(email+" "+password);
+       // console.log(formValues);
         setFormValues({...formValues,[e.target.name]:e.target.value});
     };
 

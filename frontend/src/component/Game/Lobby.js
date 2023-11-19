@@ -11,6 +11,7 @@ const Lobby = () => {
   const {game} = useContext(GameContext)
   const {socket} = useContext(SocketContext)
   const {user} = useContext(UserContext)
+  console.log(game);
   const startGame = () =>{
       socket.emit("start_game",{room : game.roomNo})
       console.log("fired start game")

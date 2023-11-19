@@ -12,12 +12,12 @@ const RoomHandler = () => {
     
     const navigate=useNavigate();
     const {setSocket,socket} =useContext(SocketContext);
-    const {game,setGame} = useContext(GameContext)
+    const {game,setGame} = useContext(GameContext);
     const {user} = useContext(UserContext)
     //var username = user
     const [room,setRoom] = useState("");
     const handleChange=(e)=>{
-    setRoom(e.target.value);
+        setRoom(e.target.value);
     };
 
     useEffect(()=>{
@@ -29,6 +29,11 @@ const RoomHandler = () => {
         })
         socket.on("game_data",(data)=>{
           setGame(data);
+          console.log("i am in room handler");
+        console.log(data);
+          localStorage.setItem('game',JSON.stringify(data));
+
+          
         })
       }
     },[socket])
