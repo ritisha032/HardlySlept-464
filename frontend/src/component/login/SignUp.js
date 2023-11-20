@@ -130,87 +130,65 @@ function SignUp() {
 }
 
   return (
-    <div className="container">
-      <pre>{JSON.stringify(formValues,undefined,2)}</pre>
-      <div className="header">
-        <div className="text">Sign Up</div>
-        <div className="underline"></div>
-      </div>
+    <div>
+        <pre>{JSON.stringify(formValues,undefined,2)}</pre>
+        <div class="title">Sign up</div>
+        <form class="flip-card__form" action="">
 
-      <div className="inputs">
-        <div className="input">
-          <img src={nameIcon} alt="b" />
-          <input
-            type="text" 
-            name="name"
-            placeholder="Name" 
-            onChange={handleChange}
-            value={formValues.name}
-          
-            
-    
-            required
-          />
-        </div>
-        {formErrors.name!=undefined?<p>{formErrors.name}</p>:null}
+            <input 
+                class="flip-card__input" 
+                placeholder="Name" 
+                name="name"
+                type="text"
+                onChange={handleChange}
+                value={formValues.name}
+                required
+            />
+            {formErrors.name!=undefined?<p>{formErrors.name}</p>:null}
 
-        <div className="input">
-          <img src={nameIcon} alt="b" />
-          <input
-            type="text"
-            name="username" 
-            placeholder="Username" 
-            value={formValues.username} 
-            onChange={handleChange}
-          />
-        </div>
-        {formErrors.username!=undefined?<p>{formErrors.username}</p>:null}
+            <input
+                class="flip-card__input" 
+                placeholder="Userame" 
+                name="username"
+                type="text"
+                onChange={handleChange}
+                value={formValues.username}
+                required
+            />
+            {formErrors.username!=undefined?<p>{formErrors.username}</p>:null}
 
-        <div className="input">
-          <img src={emailIcon} alt="b" />
-          <input
-            type="email"
-            name="email" 
-            placeholder="Enter your email" 
-            value={formValues.email} 
-            onChange={handleChange}
-          />
-        </div>
-        {formErrors.email!=undefined?<p>{formErrors.email}</p>:null}
+            <input 
+                class="flip-card__input"
+                name="email" 
+                placeholder="Email" 
+                type="email"
+                value={formValues.email} 
+                onChange={handleChange}
+            />
+            {formErrors.email!=undefined?<p>{formErrors.email}</p>:null}
 
+            <input 
+                class="flip-card__input" 
+                name="password" 
+                placeholder="Password" 
+                type="password"
+                value={formValues.password} 
+                onChange={handleChange}
+            />
+            {formErrors.password!=undefined?<p>{formErrors.password}</p>:null}
 
-        <div className="input">
-          <img src={passwordIcon} alt="b" />
-          <input
-            type="password" 
-            name="password"
-            placeholder="Password" 
-            value={formValues.password} 
-            onChange={handleChange}
-          />
-        </div>
-        {formErrors.password!=undefined?<p>{formErrors.password}</p>:null}
+            <input 
+                class="flip-card__input" 
+                name="confirmPassword" 
+                placeholder="Confirm Password" 
+                type="password"
+                value={formValues.confirmPassword} 
+                onChange={handleChange}
+            />
+            {formErrors.confirmPassword!=undefined?<p>{formErrors.confirmPassword}</p>:null}
 
-        <div className="input">
-          <img src={passwordIcon} alt="b" />
-          <input
-            type="password"
-            name="confirmPassword" 
-            placeholder="Confirm Password" 
-            value={formValues.confirmPassword} 
-            onChange={handleChange}
-          />
-        </div>
-        {formErrors.confirmPassword!=undefined?<p>{formErrors.confirmPassword}</p>:null}
-      </div>
-      <div className="submit-cont">
-        <button type="submit" className="submit" onClick={handleSubmit}>
-          Sign Up
-        </button>
-        <Link to="/login">
-          <button className="submit gray">Login</button>
-        </Link>
-      </div>
+            <button class="flip-card__btn" onClick={handleSubmit}>Confirm!</button>
+        </form> 
     </div>
   );
 }
