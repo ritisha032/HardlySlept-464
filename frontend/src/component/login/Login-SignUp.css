@@ -1,8 +1,9 @@
+
 .wrapper {
     /* width: 0%;
     margin: 250px; */
-    margin: 250px 0px 0px 300px;
-    --input-focus: #2d8cf0;
+    margin: 350px 0px 0px 750px;
+   --input-focus: #2d8cf0;
     --font-color: #323232;
     --font-color-sub: #666;
     --bg-color: #fff;

@@ -1,10 +1,6 @@
 import React, { useState,useEffect } from "react";
 
-import "./SignUp.css";
-import nameIcon from "../Assets/person.png";
-import emailIcon from "../Assets/email.png";
-import passwordIcon from "../Assets/password.png";
-import { Link } from "react-router-dom";
+import "./Login-SignUp.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -131,7 +127,7 @@ function SignUp() {
 
   return (
     <div>
-        <pre>{JSON.stringify(formValues,undefined,2)}</pre>
+        {/* <pre>{JSON.stringify(formValues,undefined,2)}</pre> */}
         <div class="title">Sign up</div>
         <form class="flip-card__form" action="">
 

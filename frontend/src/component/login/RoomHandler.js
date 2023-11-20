@@ -7,6 +7,7 @@ import UserContext from '../../context/UserContext';
 import { toast } from "react-toastify";
 import SocketContext from '../../context/SocketContext';
 import './RoomHandler.css'
+import Logout from './Logout';
 const socketTemp = io.connect('http://localhost:3001');
 
 const RoomHandler = () => {
@@ -90,6 +91,8 @@ const RoomHandler = () => {
             <button id="privateButton" className='btn'
             onClick={()=>joinRoom("public")}
             >Join Public Room</button>
+
+            <Logout className='btn'/>
 
         </div>
         {/* } */}
