@@ -1,6 +1,6 @@
 import React, { useState,useEffect, useContext } from "react";
 
-import './Login.css'
+import './Login-SignUp.css'
 import emailIcon from '../Assets/email.png'
 import passwordIcon from '../Assets/password.png'
 import { Link } from "react-router-dom";
@@ -9,8 +9,6 @@ import { useAuth} from "../../context/auth";
 import axios from "axios";
 import { toast } from "react-toastify";
 import UserContext from "../../context/UserContext";
-
-
 
 
 function Login(){
@@ -107,48 +105,33 @@ function Login(){
     }, [formErrors]);
       
     return (
-        <div className="container">
+       <div>
+        <pre>{JSON.stringify(formValues,undefined,2)}</pre>
+        <div class="title">Log in</div>
+        <form class="flip-card__form" action="">
+            <input 
+                class="flip-card__input" 
+                name="email" 
+                placeholder="Email" 
+                type="email"
+                value={formValues.email}
+                onChange={handleChange} 
+            />
+            {formErrors.email!=undefined?<p>{formErrors.email}</p>:null}
 
-            <pre>{JSON.stringify(formValues,undefined,2)}</pre>
-            <div className="header">
-                <div className="text">Login</div>
-                <div className="underline"></div>
-            </div>
+            <input
+                class="flip-card__input" 
+                type="password"
+                name="password" 
+                placeholder="Password" 
+                value={formValues.password}
+                onChange={handleChange}
+            />
+            {formErrors.password!=undefined?<p>{formErrors.password}</p>:null}
 
-            <div className="inputs">
-
-                <div className="input">
-                    <img src={emailIcon} alt/>
-                    <input 
-                        type="email" 
-                        name="email"
-                        placeholder="Email" 
-                        value={formValues.email}
-                        onChange={handleChange} 
-                    />
-                </div> 
-                {formErrors.email!=undefined?<p>{formErrors.email}</p>:null}
-
-                <div className="input">
-                    <img src={passwordIcon} alt/>
-                    <input 
-                        type="password"
-                        name="password" 
-                        placeholder="Password" 
-                        value={formValues.password}
-                        onChange={handleChange} 
-                    />
-                </div> 
-                {formErrors.password!=undefined?<p>{formErrors.password}</p>:null}
-
-            </div>
-            <div className="submit-cont">
-            <Link to="/signup">
-                <div className="submit gray">Sign Up</div>
-                </Link>
-                <button type="submit" className="submit" onClick={handleSubmit}>Login</button> 
-            </div> 
-        </div>
+            <button class="flip-card__btn" onClick={handleSubmit}>Let`s go!</button>
+        </form>
+    </div>
     )
 }
 
