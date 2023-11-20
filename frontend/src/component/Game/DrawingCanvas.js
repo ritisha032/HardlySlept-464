@@ -1,14 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FacebookShareButton, TwitterShareButton,WhatsappShareButton,LinkedinShareButton } from 'react-share';
 import './DrawingCanvas.css'
-// import Slider from '@mui/material-next/Slider'
+
+//icons import
 import pencilIcon from '../Assets/pensil.svg'
 import eraserIcon from '../Assets/eraser.svg'
+import closeIcon from '../Assets/close.svg'
+import colorFillIcon from '../Assets/colorFill.svg'
 import undoIcon from '../Assets/undo.svg'
 import redoIcon from '../Assets/redo.svg'
 import downloadIcon from '../Assets/download.svg'
 import shareIcon from '../Assets/share.svg'
 import clearIcon from '../Assets/clear.svg'
+import lineIcon from '../Assets/line.svg'
+import shapesIcon from '../Assets/shapes.svg'
+import rectIcon from '../Assets/rectangle.svg'
+import circleIcon from '../Assets/circle.svg'
+import ellipseIcon from '../Assets/ellipse.svg'
+import trapIcon from '../Assets/trapezium.svg'
+import curveIcon from '../Assets/curve.svg'
 
 import io from 'socket.io-client';
 const socket = io.connect('http://localhost:3001');
@@ -21,7 +31,9 @@ const CanvasComponent = () => {
   const [penSize, setPenSize] = useState(3);
   const [penColor, setPenColor] = useState('black');
   const [isEraser, setIsEraser] = useState(false);
+  const [isBrush,setIsBrush]=useState(false);
   const [isFillColor,setIsFillColor]=useState(false);
+  const [isShape,setIsShape]=useState(false);
   const [isShare, setIsShare] = useState(false);
   const [history, setHistory] = useState([]);
   const [currentStep, setCurrentStep] = useState(-1);
@@ -125,7 +137,6 @@ const CanvasComponent = () => {
         isEraser: isEraser,
         shapeType:shapeType,
         isDrawing:true,
-        dataURL:history[currentStep],
         function :'startDrawingsocket'
       };
 
@@ -136,9 +147,7 @@ const CanvasComponent = () => {
   function startDrawingsocket (data){
     console.log("start drawing")
     console.log(data);
-    // console.log(typeof data)
     context.beginPath();
-    // console.log(data["offsetX"] + " " + data["offsetY"]);
     context.moveTo(data.offsetX, data.offsetY);
     
     //setIsDrawing(true);
@@ -220,68 +229,10 @@ const CanvasComponent = () => {
       isEraser: isEraser,
       shapeType:shapeType,
       isDrawing:isDrawing,
-      dataURL:history[currentStep],
       function :'drawsocket'
     };
 
     socket.emit('send_data', data);
-
-
-    // else if(shapeType=='curvedLine'){
-    //   const prevStepImage = new Image();
-    //     prevStepImage.src = history[currentStep];
-    //     prevStepImage.onload = () => {
-    //     context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    //     context.drawImage(prevStepImage, 0, 0);
-    //   }
-
-    //   context.strokeStyle = penColor;
-    //   // context.beginPath();
-    //   // context.moveTo(startX, startY);
-    //   context.quadraticCurveTo(200, 1000, offsetX, offsetY);
-    //   context.moveTo(startX, startY);
-    //   context.stroke();
-    // }
-
-
-
-    // else if(shapeType=='trapezium'){
-
-    //   const prevStepImage = new Image();
-    //     prevStepImage.src = history[currentStep];
-    //     prevStepImage.onload = () => {
-    //     context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    //     context.drawImage(prevStepImage, 0, 0);
-    //   }
-
-    //   context.strokeStyle = penColor;
-    //   const dx=(0.25)*(offsetX-startX);
-    //   context.moveTo(startX + dx , startY);
-    //   context.lineTo(offsetX - dx , startY);
-    //   context.lineTo(offsetX , offsetY);
-    //   context.lineTo(startX , offsetY);
-    //   context.lineTo(startX + dx, startY);
-    //   context.stroke();
-    //   context.moveTo(startX, startY);
-    //   context.closePath();
-    // }
-
-    // else if(shapeType=='line'){
-    //   console.log(0);
-    //   const prevStepImage = new Image();
-    //     prevStepImage.src = history[currentStep];
-    //     prevStepImage.onload =  () => {
-    //     context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    //     context.drawImage(prevStepImage, 0, 0);
-    //     console.log(1);
-    //   }
-    //   console.log(2);
-    //   context.strokeStyle = penColor;
-    //   context.lineTo(offsetX, offsetY);
-    //   context.moveTo(startX, startY);
-    //   context.stroke();
-    //   context.closePath();
-    // }
 
   };
 
@@ -301,54 +252,6 @@ const CanvasComponent = () => {
         context.lineTo(data.offsetX, data.offsetY);
         context.stroke();
       }
-
-    else if(data.shapeType=='rectangle'){
-    
-      const prevStepImage = new Image();
-        prevStepImage.src =data.dataURL;
-        prevStepImage.onload = () => {
-        context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-        context.drawImage(prevStepImage, 0, 0);
-      }
-        context.strokeStyle = data.penColor;
-        context.strokeRect(data.startX, data.startY, data.offsetX -data.startX,data.offsetY-data.startY);
-        context.moveTo(data.startX, data.startY);
-    }
-
-    else if(data.shapeType=='circle'){
-      console.log(1);
-      const prevStepImage = new Image();
-        prevStepImage.src =data.dataURL;
-        prevStepImage.onload = () => {
-        context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-        context.drawImage(prevStepImage, 0, 0);
-      }
-        context.strokeStyle = data.penColor;
-        const radius = Math.sqrt(Math.pow(data.offsetX - data.startX, 2) + Math.pow(data.offsetY- data.startY, 2));
-        context.beginPath();
-        context.arc(data.startX,data.startY, radius, 0, 2 * Math.PI);
-        context.moveTo(data.startX, data.startY);
-        context.stroke();
-    }
-    else if(data.shapeType=='ellipse'){
-        const prevStepImage = new Image();
-        prevStepImage.src = data.dataURL;
-        prevStepImage.onload = () => {
-        context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-        context.drawImage(prevStepImage, 0, 0);
-      }
-
-      context.strokeStyle = data.penColor;
-      const centerX = (data.startX + data.offsetX) / 2;
-      const centerY = (data.startY + data.offsetY) / 2;
-      const radiusX = Math.abs(data.offsetX - data.startX) / 2;
-      const radiusY = Math.abs(data.offsetY - data.startY) / 2;
-
-      context.beginPath();
-      context.ellipse(centerX, centerY,radiusX,radiusY, 0, 0, 2 * Math.PI);
-      context.moveTo(data.startX, data.startY);
-      context.stroke();
-    }
   };
 
   const endDrawing = (e) => {
@@ -407,7 +310,6 @@ const CanvasComponent = () => {
       penColor: penColor,
       penSize: penSize,
       isEraser: isEraser,
-      dataURL:history[currentStep],
       shapeType:shapeType,
       isDrawing:false,
       function :'endDrawingSocket'
@@ -490,7 +392,12 @@ const CanvasComponent = () => {
   };
 
   const handleShapeChange = (e) => {
-    setShapeType(e.target.value);
+    if(isEraser){
+      setShapeType("Pen");
+    }
+    else {
+      setShapeType(e.target.name);
+    }
   };
 
   //-----------------ColorFill Function---------------------------
@@ -596,6 +503,18 @@ const CanvasComponent = () => {
       context.drawImage(prevStepImage, 0, 0);  
     }     
   };
+
+  //------------------------button press-------------------------------
+
+  const PenButton=()=>{
+    setIsBrush(!isBrush);
+    setShapeType("Pen");
+  }
+
+  const EraserButton=()=>{
+    setIsEraser(!isEraser)
+    setShapeType("Pen");
+  }
   
   // ------------------------download drawing----------------------------
 
@@ -624,44 +543,27 @@ const CanvasComponent = () => {
         
         <div className='tool-cont animated-div'>
 
-              <div>
-                <input
-                  type="range" min="2" max="20" value={penSize} className='pen-size'
-                  onChange={(e) => setPenSize(parseInt(e.target.value))}
-                />
+              <div onClick={PenButton}>
+                 <img src={pencilIcon} className='img' alt/>
+              </div>
+
+              <div onClick={EraserButton}>
+                 <img src={isEraser?closeIcon:eraserIcon} className='img' alt/>
+              </div>
+
+              <div onClick={() => setIsFillColor(!isFillColor)}><img src={colorFillIcon} className='img' alt/></div>
               
+              <div onClick={()=>setIsShape(!isShape)}>
+                 <img src={shapesIcon} className='img' alt/>
               </div>
-
-              <div>
-                  <input className='colorPicker'
-                    type="color"
-                    value={penColor}
-                    onChange={(e) => setPenColor(e.target.value)}
-                  />
-              </div>
-
-              <div onClick={() => setIsEraser(!isEraser)}>
-                 <img src={isEraser?pencilIcon:eraserIcon} className='img' alt/>
-              </div>
-
-              <div onClick={() => setIsFillColor(!isFillColor)}><button>Fillcolor</button></div>
-
-              <select onChange={handleShapeChange} value={shapeType} className='tool-list'>
-                <option value="Pen">Pen</option>
-                <option value="rectangle">Rectangle</option>
-                <option value="circle">Circle</option>
-                <option value="line">Line</option>
-                <option value="ellipse">Ellipse</option>
-                <option value="trapezium">Trapezium</option>
-                <option value="curveLine">Curve Line</option>
-              </select>
+              
                 
                 <div onClick={undo}><img src={undoIcon} className='img' alt/></div>
                 <div onClick={redo}><img src={redoIcon} className='img' alt/></div>
                 <div onClick={download}><img src={downloadIcon} className='img' alt/></div>
                 <div onClick={clearCanvas}><img src={clearIcon} className='img' alt/></div>
                 <div onClick={uploadImage}><img src={shareIcon} className='img'></img></div>
-              </div>
+            </div>
 
               {isShare?<div className='social-cont animated-div'>
                   <div className='preview'><img className='preview' src={history[currentStep]}></img></div>
@@ -682,8 +584,44 @@ const CanvasComponent = () => {
                         <button>LinkedIn</button>
                       </LinkedinShareButton>
                   </div>
-                 
                 </div>:null}
+
+              {isEraser?<div className='eraser-cont animated-div'>
+                <input
+                  type="range"
+                  min="2"
+                  max="20" 
+                  value={penSize} 
+                  className='pen-size'
+                  onChange={(e) => setPenSize(parseInt(e.target.value))}
+                />
+              </div>:null}
+              
+              {isBrush && (!isEraser)?<div className='brush-cont animated-div'>
+                <input
+                  type="range"
+                  min="2"
+                  max="20" 
+                  value={penSize} 
+                  className='pen-size'
+                  onChange={(e) => setPenSize(parseInt(e.target.value))}
+                />
+                <input className='colorPicker'
+                    type="color"
+                    value={penColor}
+                    onChange={(e) => setPenColor(e.target.value)}
+                  />
+              </div>:null}
+
+              {isShape?<div className='shape-cont animated-div'>
+              <img className='img' name="Pen" onClick={handleShapeChange} src={pencilIcon}></img>
+              <img className='img' name="line" onClick={handleShapeChange} src={lineIcon}></img>
+              <img className='img' name="rectangle" onClick={handleShapeChange} src={rectIcon}></img>
+              <img className='img' name="circle" onClick={handleShapeChange} src={circleIcon}></img>
+              <img className='img' name="ellipse" onClick={handleShapeChange} src={ellipseIcon}></img>
+              <img className='img' name="trapezium" onClick={handleShapeChange} src={trapIcon}></img>
+              <img className='img' name="curveLine" onClick={handleShapeChange} src={curveIcon}></img>
+              </div>:null}
     </div>
   );
 };

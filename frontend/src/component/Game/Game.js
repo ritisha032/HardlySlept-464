@@ -5,6 +5,7 @@ import ChatBox from './ChatBox';
 import Timer from './Timer';
 import SocketContext from '../../context/SocketContext';
 import GameContext from '../../context/GameContext';
+import DrawingCanvas from '../Game/DrawingCanvas.js'
 
 
 
@@ -55,6 +56,7 @@ function Game() {
     <ChatBox />
     <Timer time={secondsLeft}/>
     <div>{hint}</div>
+    <DrawingCanvas/>
     </div>
     
   );

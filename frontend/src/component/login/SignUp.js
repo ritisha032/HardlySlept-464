@@ -96,8 +96,11 @@ function SignUp() {
 
     const errors = {};
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+    if(!values.username){
+      errors.username = "Username is required!";
+    }
     if (!values.name) {
-    errors.username = "Name is required!";
+    errors.name = "Name is required!";
     }
     if (!values.email) {
     errors.email = "Email is required!";
