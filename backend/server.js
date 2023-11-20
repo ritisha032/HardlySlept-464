@@ -222,6 +222,11 @@ io.on("connection", (socket) => {
       socket.emit("feedback", "Not a Member, please join");
     }
   });
+
+  //canvas
+  socket.on("send_data",(data)=>{
+    socket.broadcast.emit("receive_data",data);
+  })
 });
 
 //<!---------socket related logic -------------------!>//
