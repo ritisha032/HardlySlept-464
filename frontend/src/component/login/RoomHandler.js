@@ -10,12 +10,17 @@ const socketTemp = io.connect('http://localhost:3001');
 
 const RoomHandler = () => {
     
+
     const navigate=useNavigate();
+    const profile= async(e) => {
+    }
+
     const {setSocket,socket} =useContext(SocketContext);
     const {game,setGame} = useContext(GameContext);
     const {user} = useContext(UserContext)
     //var username = user
     const [room,setRoom] = useState("");
+    
     const handleChange=(e)=>{
         setRoom(e.target.value);
     };
@@ -29,8 +34,8 @@ const RoomHandler = () => {
         })
         socket.on("game_data",(data)=>{
           setGame(data);
-          console.log("i am in room handler");
-        console.log(data);
+          //console.log("i am in room handler");
+        //console.log(data);
           localStorage.setItem('game',JSON.stringify(data));
 
           
@@ -72,6 +77,10 @@ const RoomHandler = () => {
   <input placeholder="roomNo" value={room} onChange={handleChange} />
   <button id="publicButton" onClick={()=>joinRoom("private")}>Join Private Room</button>
   <button id="privateButton" onClick={()=>joinRoom("public")}>Join Public Room</button>
+  <button onClick={ () => {
+          navigate("/profile");
+
+  }}>Profile</button>
     </div>}
     </div>
   )

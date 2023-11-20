@@ -12,6 +12,7 @@ import {
 import Login from './component/login/Login';
 import SignUp from './component/login/SignUp';
 import Homepage from './component/login/HomePage';
+import Profile from './component/login/Profile'
 import { AuthProvider } from "./context/auth";
 import Lobby from './component/Game/Lobby';
 import { ToastContainer } from "react-toastify";
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
   {
     path:"/HomePage",
     element:<Homepage/>
+  },
+  {
+    path:"/profile",
+    element:<Profile/>
   }
 ]);
 
