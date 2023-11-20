@@ -21,6 +21,7 @@ import UserContext from './context/UserContext';
 import UserContextProvider from './context/UserContextProvider';
 import SocketContextProvider from './context/SocketContextProvider';
 import GameRoom from './component/Game/GameRoom';
+import GameForm from './component/Game/GameForm';
 
 
 

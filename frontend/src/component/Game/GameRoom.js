@@ -10,7 +10,7 @@ function GameRoom() {
     console.log("in game room");
     console.log(game);
     return (
-    <div>{(game.status=="Lobby")?<Lobby/>:<Game/>}</div>
+    <div>{(game?.status=="Lobby")?<Lobby/>:<Game/>}</div>
   )
 }
 
