@@ -6,6 +6,7 @@ import Player from './Player'
 import SocketContext from '../../context/SocketContext'
 import UserContext from '../../context/UserContext'
 import ChatBox from './ChatBox'
+import GameForm from './GameForm'
 
 const Lobby = () => {
   const {game} = useContext(GameContext)
@@ -20,6 +21,7 @@ const Lobby = () => {
   return (
     <div>
       <h1>{game.type}</h1>
+      <GameForm></GameForm>
      { Object.keys(game.player_names).map((data,index)=>{
         return <Player user={data}/>
       })}

@@ -9,8 +9,6 @@ import {
   Route,
   Link,
 } from "react-router-dom";
-import Login from './component/login/Login';
-import SignUp from './component/login/SignUp';
 import LoginSignUp from './component/login/Login-SignUp'
 import Homepage from './component/login/HomePage';
 import Profile from './component/login/Profile'
@@ -29,19 +27,11 @@ import GameForm from './component/Game/GameForm';
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Login/>,
+    element: <LoginSignUp/>,
   },
   {
     path: "/*",
     element: <GameRoom/>,
-  },
-  {
-    path: "/login",
-    element: <LoginSignUp/>,
-  },
-  {
-    path: "/signup",
-    element: <SignUp/>,
   },
 
   {
