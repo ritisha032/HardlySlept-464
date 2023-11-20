@@ -141,9 +141,9 @@ io.on("connection", (socket) => {
       word: "09sdfsvclks2111ik",
       gameData: {
         player_names: {},
-        TotalRounds: 3,
+        TotalRounds: 3, //
         currentRound: 1,
-        TotalTime: 30,
+        TotalTime: 30,//
         CurrentTime: 30,
         drawer: null,
         roomNo: rm,
