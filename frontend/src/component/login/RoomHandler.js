@@ -6,21 +6,17 @@ import GameContext from '../../context/GameContext';
 import UserContext from '../../context/UserContext';
 import { toast } from "react-toastify";
 import SocketContext from '../../context/SocketContext';
+import './RoomHandler.css'
 const socketTemp = io.connect('http://localhost:3001');
 
 const RoomHandler = () => {
     
-
     const navigate=useNavigate();
-    const profile= async(e) => {
-    }
-
     const {setSocket,socket} =useContext(SocketContext);
     const {game,setGame} = useContext(GameContext);
     const {user} = useContext(UserContext)
     //var username = user
     const [room,setRoom] = useState("");
-    
     const handleChange=(e)=>{
         setRoom(e.target.value);
     };
@@ -34,8 +30,8 @@ const RoomHandler = () => {
         })
         socket.on("game_data",(data)=>{
           setGame(data);
-          //console.log("i am in room handler");
-        //console.log(data);
+          console.log("i am in room handler");
+        console.log(data);
           localStorage.setItem('game',JSON.stringify(data));
 
           
@@ -71,17 +67,32 @@ const RoomHandler = () => {
 
   return (
     <div>
-    { (socket==null)?<div>Loading</div>:<div>
-  <button id="publicButton" onClick={()=>createRoom("public")}>Create Public Room</button>
-  <button id="privateButton" onClick={()=>createRoom("private")}>Create Private Room</button>
-  <input placeholder="roomNo" value={room} onChange={handleChange} />
-  <button id="publicButton" onClick={()=>joinRoom("private")}>Join Private Room</button>
-  <button id="privateButton" onClick={()=>joinRoom("public")}>Join Public Room</button>
-  <button onClick={ () => {
-          navigate("/profile");
+        {/* { (socket==null)?<div>Loading</div>: */}
+        <div className="room-cont">
 
-  }}>Profile</button>
-    </div>}
+            <button id="publicButton" className='btn'
+             onClick={()=>createRoom("public")}
+            >Create Public Room</button>
+
+            <button id="privateButton" className='btn'
+             onClick={()=>createRoom("private")}
+            >Create Private Room</button>
+
+            <div className='publicRoom-cont'>
+                <input placeholder="Enter Room Code" className='msg-field' 
+                value={room} onChange={handleChange} 
+                />
+                <button id="publicButton"className='btn'
+                onClick={()=>joinRoom("private")}
+                >Join Private Room</button>
+            </div>
+            
+            <button id="privateButton" className='btn'
+            onClick={()=>joinRoom("public")}
+            >Join Public Room</button>
+
+        </div>
+        {/* } */}
     </div>
   )
 }
