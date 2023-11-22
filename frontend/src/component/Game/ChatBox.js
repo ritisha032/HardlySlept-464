@@ -29,17 +29,28 @@ function ChatBox() {
 
 
   return (
-    <>
-    <div className='chatBox'>
-    {messageReceived.map((ele,index)=>
-     <Message {...ele} index={index}/>
-    )}
-    </div>
-    <input placeholder="Message..." onChange={(event)=>{
+    <div className='chat-container'>
+
+      <div className='chatBox'>
+
+        {messageReceived.map((ele,index)=>
+        <Message {...ele} index={index}/>
+        )}
+
+      </div >
+
+      <div className='send'>
+
+        <input 
+          className='chat-msg-field'
+          placeholder="Message..." 
+          onChange={(event)=>{
           setMessage(event.target.value);
-      }}/>
-      <button onClick={sendMessage}>Send Message</button>
-    </>
+        }}/>
+
+        <button className='chatSend-btn' onClick={sendMessage}>Send</button>
+      </div>
+    </div>
   )
 }
 

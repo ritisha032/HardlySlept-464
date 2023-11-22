@@ -1,71 +1,54 @@
 import React, { useState } from 'react';
+import  './gameForm.css'
 
-import  '../../css/GameForm.css'
 function GameForm() {
-  // State to store form data
-  const [formData, setFormData] = useState({
-    numberOfRounds: 1,
-    time: ''
-  });
+    const [rounds,setRounds]=useState(1);
+    const [duration,setDuration]=useState(30);
 
-  // Function to handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    // Add any additional logic for form submission here
-  };
+    return (
+      <div className="gf-cont">
+        <h1 className='gf-h1'>Game Settings</h1>
+        <form  className='gf-form'>
+          
+          <div className='gf-div'>
+            <label className='gf-label'>No of Rounds:</label>
+            <select
+              id="rounds"
+              name="rounds"
+              className='gf-select'
+              value={rounds}
+              onChange={(e) =>setRounds(e.target.value)}
+            >
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+          </div>
 
-  // Function to handle changes in form fields
-  const handleChange = (fieldName, value) => {
-    setFormData({
-      ...formData,
-      [fieldName]: value
-    });
-  };
+          <div className='gf-div'>
+            <label className='gf-label'>Round Duration:</label>
+            <select
+              id="time"
+              name="time"
+              className='gf-select'
+              value={duration}
+              onChange={(e) =>setDuration(e.target.value)}
+            >
+              <option>30</option>
+              <option>45</option>
+              <option>60</option>
+              <option>75</option>
+              <option>90</option>
+            </select>
+          </div>
 
-  return (
-    <div className="App">
-      <h1>Game Settings</h1>
-      <form onSubmit={handleSubmit}>
-        {/* No of Rounds Component */}
-        <div>
-          <label htmlFor="rounds">No of Rounds:</label>
-          <select
-            id="rounds"
-            name="rounds"
-            value={formData.numberOfRounds}
-            onChange={(e) => handleChange('numberOfRounds', e.target.value)}
-          >
-            {[1, 2, 3, 4, 5].map((number) => (
-              <option key={number} value={number}>
-                {number}
-              </option>
-            ))}
-          </select>
-        </div>
+          <button className="gf-start-btn">Start Game</button>
 
-        {/* Time Component */}
-        <div>
-          <label htmlFor="time">Time:</label>
-          <select
-            id="time"
-            name="time"
-            value={formData.time}
-            onChange={(e) => handleChange('time', e.target.value)}
-          >
-            {[30, 45, 60, 90].map((number) => (
-              <option key={number} value={number}>
-                {number}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Submit Button */}
-        <button type="submit">Submit</button>
       </form>
-    </div>
-  );
+    </div> 
+    );
 }
 
 export default GameForm;

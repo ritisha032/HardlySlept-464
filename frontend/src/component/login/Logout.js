@@ -5,6 +5,7 @@ import RoomHandler from './RoomHandler';
 import { toast } from 'react-toastify';
 import UserContext from '../../context/UserContext';
 import GameContext from '../../context/GameContext';
+import './Logout.css'
 
 const Logout = () => {
     const [auth, setAuth] = useAuth();
@@ -29,7 +30,7 @@ const Logout = () => {
 
   return (
     <div>
-            <button onClick={handleLogout}>Log Out</button>
+       <button onClick={handleLogout} className='logout-btn'>Logout</button>
     </div>
   )
 }

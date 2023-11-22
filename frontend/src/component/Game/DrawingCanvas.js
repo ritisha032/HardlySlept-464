@@ -529,7 +529,7 @@ const CanvasComponent = () => {
 
   //-------------------------html-----------------------------------------
   return (
-      <div>
+      <div className='canvas-cont'>
         <canvas
           ref={canvasRef}
           height={500}

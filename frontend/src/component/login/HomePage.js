@@ -13,9 +13,9 @@ const Homepage = () => {
     return (
         <>
             <div className='home-container'>
-               <h1>Welcome {auth?.user?.name}</h1>
+               <h1 className='animated-div'>Welcome {auth?.user?.name}</h1>
                {/* <Logout/> */}
-               <RoomHandler></RoomHandler> 
+               <div className='animated-div'><RoomHandler/></div> 
             </div>
             
         </>
