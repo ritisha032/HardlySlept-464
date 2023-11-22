@@ -1,0 +1,79 @@
+@keyframes fadeInUp {
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0%);
+        opacity: 1;
+    }
+}
+
+.animated-div {
+    animation: 0.5s fadeInUp;
+}
+
+.game-cont {
+    display: flex;
+    flex-direction: column;
+    margin: 0px 100px 100px 100px;
+    gap: 10px;
+    --input-focus: #2d8cf0;
+    --font-color: #323232;
+    --font-color-sub: #666;
+    --bg-color: #fff;
+    --bg-color-alt: #666;
+    --main-color: #323232;
+}
+
+.game-header {
+    gap: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: aqua;
+    margin: 25px;
+    height: 100px;
+    /* background: lightgrey; */
+    border: 2px solid var(--main-color);
+    box-shadow: 4px 4px var(--main-color);
+}
+
+.game-component {
+    display: flex;
+    gap: 35px;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-leaderboard {
+    left: 25px;
+    width: 400px;
+    height: 500px;
+    margin-left: 25px;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    /* background: lightgrey; */
+    border: 2px solid var(--main-color);
+    box-shadow: 4px 4px var(--main-color);
+}
+
+.game-drawCanvas {
+    background-color: pink;
+    border: 2px solid var(--main-color);
+    box-shadow: 4px 4px var(--main-color);
+}
+
+.game-chat {
+    background-color: aqua;
+    margin-right: 25px;
+    border: 2px solid #323232;
+    box-shadow: 4px 4px #323232;
+}
+
+.game-timer {
+    margin-right: 600px;
+}

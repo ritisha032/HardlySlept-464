@@ -6,7 +6,9 @@ import Timer from './Timer';
 import SocketContext from '../../context/SocketContext';
 import GameContext from '../../context/GameContext';
 import DrawingCanvas from '../Game/DrawingCanvas.js'
+import Logout from '../login/Logout'
 
+import './Game.css'
 
 
 function Game() {
@@ -47,16 +49,27 @@ function Game() {
   },[])
 
   return (
-    <div >
-    {
-      (option.length!=0)?option.map((data,index)=>{
-       return <button onClick={()=>{sendChosenWord(data)}}>{data}</button>
-      }):<div></div>
-    }
-    <ChatBox />
-    <Timer time={secondsLeft}/>
-    <div>{hint}</div>
-    <DrawingCanvas/>
+    <div className='game-cont'>
+
+      <div className='game-header animated-div'>
+
+          <div className='game-timer'><Timer time={secondsLeft}/></div>
+          <div className='game-words'>
+            {
+                (option.length!=0)?option.map((data,index)=>{
+                return <button onClick={()=>{sendChosenWord(data)}}>{data}</button>
+                }):<div></div>
+            }
+          </div>
+          <div className='game-hint'>{hint}</div>
+          <div className='game-logout'><Logout/></div>
+      </div>
+      <div className='game-component'>
+          <div className='game-leaderboard animated-div '>leaderboard</div>
+          <DrawingCanvas className='game-drawCanvas animated-div'/>
+          <div className='animated-div'><ChatBox className='game-chat' /></div>
+      </div>
+      
     </div>
     
   );
