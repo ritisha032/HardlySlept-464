@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import RoomHandler from "./RoomHandler";
 import Logout from "./Logout";
 import "./Home-Page.css";
-import Sample from "./Login-SignUp";
+import Spinner from "../Spinner";
 
 const Homepage = () => {
   const [ok, setOk] = useState(false);
@@ -39,7 +39,7 @@ const Homepage = () => {
   return (
     <>
       {!ok ? (
-        <Sample/>
+          <Spinner/>
       ) : (
         <div className="home-container">
           <h1>Welcome {auth?.user?.name}</h1>

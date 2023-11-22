@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 const Spinner = ({path="login"}) => {
 
   //timer of 5s before redirecting to login page
-  const [count, setCount] = useState(5);
+  const [count, setCount] = useState(3);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -13,7 +13,7 @@ const Spinner = ({path="login"}) => {
     }, 1000);
     //when count=0 redirect to login page
     count === 0 &&
-      navigate(`/${path}`, {
+      navigate(`/`, {
         state: location.pathname,
       });
     return () => clearInterval(interval);
