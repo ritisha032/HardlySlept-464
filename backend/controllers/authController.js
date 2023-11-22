@@ -94,7 +94,7 @@ export const login=async(req,res)=>{
        const payload={
             id:user._id,
        }
-        const token=await JWT.sign(payload,process.env.JWT_SECRET,{expiresIn:'7d'});
+        const token=await JWT.sign(payload,process.env.JWT_SECRET,{expiresIn:'1d'});
         
         res.json({
             success:true,

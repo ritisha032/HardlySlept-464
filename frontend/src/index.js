@@ -3,12 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Route,
-  Link,
-} from "react-router-dom";
+import { BrowserRouter } from 'react-router-dom';
 import LoginSignUp from './component/login/Login-SignUp'
 import Homepage from './component/login/HomePage';
 import Profile from './component/login/Profile'
@@ -24,7 +19,7 @@ import GameForm from './component/Game/GameForm';
 
 
 
-const router = createBrowserRouter([
+/*const router = createBrowserRouter([
   {
     path: "/",
     element: <LoginSignUp/>,
@@ -42,20 +37,22 @@ const router = createBrowserRouter([
     path:"/profile",
     element:<Profile/>
   }
-]);
+]);*/
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <AuthProvider>
+    <BrowserRouter>
   <GameContextProvider>  
     <UserContextProvider>
       <SocketContextProvider>
-        <RouterProvider router={router}/>
+        <App/>
         <ToastContainer/>
       </SocketContextProvider>
     </UserContextProvider> 
  </GameContextProvider>
+ </BrowserRouter>
   </AuthProvider>
 
 );
