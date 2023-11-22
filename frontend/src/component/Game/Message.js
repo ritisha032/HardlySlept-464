@@ -18,12 +18,12 @@ function Message(props) {
         message = "guessed the word correctly"
     }
   return (
-  <div class="dropdown" >
-  <button class="dropbtn" style={{backgroundColor:`${color}`}}>{props.user}:-{message}</button>
-  <div class="dropdown-content">
-    <a href="#">Mute</a>
-  </div>
-  </div>
+    <div class="dropdown" >
+      <button class="dropbtn" style={{backgroundColor:`${color}`}}>{props.user}:-{message}</button>
+      <div class="dropdown-content">
+        <a href="#">Mute</a>
+      </div>
+    </div>
   )
 }
 

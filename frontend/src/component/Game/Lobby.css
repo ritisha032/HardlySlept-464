@@ -1,0 +1,117 @@
+@keyframes fadeInUp {
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0%);
+        opacity: 1;
+    }
+}
+
+.animated-div {
+    animation: 0.5s fadeInUp;
+}
+
+.lobby-cont {
+    display: flex;
+    flex-direction: column;
+    margin: 0px 100px 100px 100px;
+    gap: 10px;
+
+    --input-focus: #2d8cf0;
+    --font-color: #323232;
+    --font-color-sub: #666;
+    --bg-color: #fff;
+    --bg-color-alt: #666;
+    --main-color: #323232;
+}
+
+.lobby-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-color);
+    margin: 25px;
+    height: 100px;
+    /* background: lightgrey; */
+    border: 2px solid var(--main-color);
+    box-shadow: 4px 4px var(--main-color);
+}
+
+.lobby-logout {
+    margin-left: 900px;
+}
+
+.lobby-components {
+    display: flex;
+    gap: 35px;
+    justify-content: center;
+    align-items: center;
+}
+
+.lobby {
+    left: 25px;
+    width: 500px;
+    height: 500px;
+    margin-left: 25px;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    /* background: lightgrey; */
+    border: 2px solid var(--main-color);
+    box-shadow: 4px 4px var(--main-color);
+}
+
+.chat-cont {
+    /* width: 450px;
+    height: 500px;*/
+    margin-right: 25px;
+    border: 2px solid #323232;
+    box-shadow: 4px 4px #323232;
+}
+
+.gameForm {
+    border: 2px solid var(--main-color);
+    box-shadow: 4px 4px var(--main-color);
+}
+
+.lobby-copy {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.lobby-copy input[type="text"] {
+    width: 500px;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    border: 2px solid var(--main-color);
+    box-shadow: 4px 4px var(--main-color);
+}
+
+.lobby-copy button[type="submit"] {
+    background-color: #4e99e9;
+    margin-left: 450px;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+    position: absolute;
+
+    border: 2px solid var(--main-color);
+    box-shadow: 4px 4px var(--main-color);
+}
+
+.lobby-copy button[type="submit"]:hover {
+    transform: translate(-0.05em, -0.05em);
+    box-shadow: 0.15em 0.15em;
+}
+
+.lobby-copy button[type="submit"]:active {
+    transform: translate(0.05em, 0.05em);
+    box-shadow: 0.05em 0.05em;
+}
