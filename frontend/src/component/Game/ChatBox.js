@@ -1,22 +1,22 @@
 import React, { useContext ,useState,useEffect} from 'react'
 import './ChatBox.css'
 import Message from './Message'
-import UserContext from '../../context/UserContext';
 import GameContext from '../../context/GameContext';
 import SocketContext from '../../context/SocketContext';
+import { useAuth} from "../../context/auth";
 
 
 
 function ChatBox() {
   const [message,setMessage] = useState("");
   const [messageReceived,setMessageReceived] = useState([]);
-  const {user} = useContext(UserContext);
   const {game} = useContext(GameContext)
   const {socket} = useContext(SocketContext)
-  
+  const [auth,setAuth]=useAuth('');
+
   const sendMessage = () =>{
     const room = game.roomNo
-    socket.emit("send_message",{message,room,user});
+    socket.emit("send_message",{message,room,user:auth.user.username});
      console.log("send Message");
   }
 

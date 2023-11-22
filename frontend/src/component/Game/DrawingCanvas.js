@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect , useContext } from 'react';
 import { FacebookShareButton, TwitterShareButton,WhatsappShareButton,LinkedinShareButton } from 'react-share';
 import './DrawingCanvas.css'
-
+import SocketContext from '../../context/SocketContext';
 //icons import
 import pencilIcon from '../Assets/pensil.svg'
 import eraserIcon from '../Assets/eraser.svg'
@@ -20,11 +20,10 @@ import ellipseIcon from '../Assets/ellipse.svg'
 import trapIcon from '../Assets/trapezium.svg'
 import curveIcon from '../Assets/curve.svg'
 
-import io from 'socket.io-client';
-const socket = io.connect('http://localhost:3001');
 
 const CanvasComponent = () => {
 
+  const {socket} = useContext(SocketContext)
   const canvasRef = useRef(null);
   const [context, setContext] = useState(null);
   const [isDrawing, setIsDrawing] = useState(false);
