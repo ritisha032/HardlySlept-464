@@ -13,9 +13,7 @@ const Spinner = ({path="login"}) => {
     }, 1000);
     //when count=0 redirect to login page
     count === 0 &&
-      navigate(`/`, {
-        state: location.pathname,
-      });
+      navigate(`/`);
     return () => clearInterval(interval);
   }, [count, navigate, location,path]);
 
