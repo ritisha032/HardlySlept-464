@@ -17,7 +17,11 @@
 .game-cont {
     display: flex;
     flex-direction: column;
-    margin: 0px 100px 100px 100px;
+    position: absolute;
+    top: 2%;
+    left: 7%;
+    right: 7%;
+    /* bottom:4%; */
     gap: 10px;
     --input-focus: #2d8cf0;
     --font-color: #323232;
@@ -28,52 +32,62 @@
 }
 
 .game-header {
-    gap: 100px;
+    /* gap: 100px; */
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     background-color: aqua;
-    margin: 25px;
+    margin: 2%;
     height: 100px;
-    /* background: lightgrey; */
+    border-radius: 5px;
     border: 2px solid var(--main-color);
     box-shadow: 4px 4px var(--main-color);
 }
 
+.game-timer {
+    margin-left: 2%;
+}
+
+.game-logout {
+    margin-right: 2%;
+}
+
 .game-component {
     display: flex;
+    margin-left: 2%;
+    margin-right: 2%;
     gap: 35px;
     justify-content: center;
     align-items: center;
 }
 
 .game-leaderboard {
-    left: 25px;
+    display: flex;
     width: 400px;
     height: 500px;
-    margin-left: 25px;
     display: flex;
     flex-direction: column;
     /* justify-content: center; */
     align-items: center;
-    /* background: lightgrey; */
+    border-radius: 5px;
     border: 2px solid var(--main-color);
     box-shadow: 4px 4px var(--main-color);
 }
 
 .game-drawCanvas {
+    width: 500px;
+    height: 500px;
     background-color: pink;
+    border-radius: 5px;
     border: 2px solid var(--main-color);
     box-shadow: 4px 4px var(--main-color);
 }
 
 .game-chat {
-    background-color: aqua;
-    margin-right: 25px;
-    border: 2px solid #323232;
-    box-shadow: 4px 4px #323232;
+    /* display: none; */
+    /* background-color: aqua; */
+    height: 500px;
+    border-radius: 5px;
 }
 
-.game-timer {
-    margin-right: 600px;
-}
+@media only screen and (max-width: 950px) {}
