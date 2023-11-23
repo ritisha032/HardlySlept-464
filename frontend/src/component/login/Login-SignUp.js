@@ -3,7 +3,7 @@ import './Login-SignUp.css'
 import Login from './Login'
 import SignUp from './SignUp'
 
-const Sample = () => {
+const LoginSignUp = () => {
   return (
     <div className='container'>
  
@@ -31,4 +31,4 @@ const Sample = () => {
   )
 }
 
-export default Sample
+export default LoginSignUp

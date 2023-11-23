@@ -96,7 +96,7 @@ function Login(){
       
     return (
        <div>
-        <pre>{JSON.stringify(formValues,undefined,2)}</pre>
+        {/* <pre>{JSON.stringify(formValues,undefined,2)}</pre> */}
         <div class="title">Log in</div>
         <form class="flip-card__form" action="">
             <input 
