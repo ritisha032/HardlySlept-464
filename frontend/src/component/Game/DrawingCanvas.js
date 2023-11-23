@@ -22,7 +22,6 @@ import curveIcon from '../Assets/curve.svg'
 
 
 const CanvasComponent = () => {
-
   const {socket} = useContext(SocketContext)
   const canvasRef = useRef(null);
   const [context, setContext] = useState(null);
@@ -40,14 +39,20 @@ const CanvasComponent = () => {
   const [startX,setStartX]=useState(0);
   const [startY,setStartY]=useState(0);
   const [URL,setURL]=useState('');
-
+  var i=0;
   useEffect(()=>{
     // console.log(canvasRef.current.toDataURL());
-    console.log("useEffect History")
-    setHistory([...history,canvasRef.current.toDataURL()]) //pushing blank canvas in array....
-    setCurrentStep(0);
+    if(context!=null && i==0){
+      console.log("useEffect History")
+      context.fillStyle='white';
+      context.fillRect(0,0,canvasRef.current.width,canvasRef.current.height);
+      setHistory([...history,canvasRef.current.toDataURL()]) //pushing blank canvas in array....
+      setCurrentStep(0);
+      i++;
+    }
+    
     // console.log(currentStep + " "+ history.length);
-  },[])
+  },[context])
 
   useEffect(()=>{
     if(context!=null){
@@ -111,14 +116,22 @@ const CanvasComponent = () => {
     const { offsetX, offsetY } = e.nativeEvent;
 
     if(isFillColor){
-        const pixel = canvasRef.current.getContext('2d').getImageData(offsetX,offsetY, 1, 1).data;
-        const rgb = { 
-          r:pixel[0],
-          g:pixel[1],
-          b:pixel[2]
-        };
-        // console.log( rgb.r + " " + rgb.g + " "+ rgb.b);
-        // floodFill(offsetX, offsetY, [rgb.r,rgb.g,rgb.b], [255, 0, 0]);
+        const targetColor= getColorAtPixel(offsetX, offsetY);
+        const replacementColor =[255, 0, 0] ;
+
+        if (targetColor !== `rgb(${replacementColor[0]}, ${replacementColor[1]}, ${replacementColor[2]})`) {
+            floodFill(offsetX, offsetY, targetColor, replacementColor);
+        }
+
+         if(currentStep<history.length-1){
+          while(currentStep!=history.length-1){
+            history.pop();
+          }
+        }
+      setHistory([...history,canvasRef.current.toDataURL('image/png')])
+      setCurrentStep(currentStep+1);
+      //console.log(history[currentStep]);
+      console.log(currentStep + " "+ history.length);   
     }
 
     else{
@@ -128,26 +141,41 @@ const CanvasComponent = () => {
 
       setStartX(offsetX);
       setStartY(offsetY);
-      const data = {
+    }
+
+    const data = {
         offsetX: offsetX,
         offsetY: offsetY,
         penColor: penColor,
         penSize: penSize,
         isEraser: isEraser,
+        isFillColor:isFillColor,
         shapeType:shapeType,
         isDrawing:true,
         function :'startDrawingsocket'
       };
 
       socket.emit('send_canvas_data', data);
-    }
   };
 
   function startDrawingsocket (data){
-    console.log("start drawing")
-    console.log(data);
-    context.beginPath();
-    context.moveTo(data.offsetX, data.offsetY);
+
+    if(data.isFillColor){
+        const targetColor= getColorAtPixel(data.offsetX, data.offsetY);
+        const replacementColor = [255, 0, 0];
+
+        if (targetColor !== `rgb(${replacementColor[0]}, ${replacementColor[1]}, ${replacementColor[2]})`) {
+            floodFill(data.offsetX, data.offsetY, targetColor, replacementColor);
+        }
+    }
+
+    else{
+      console.log("start drawing")
+      console.log(data);
+      context.beginPath();
+      context.moveTo(data.offsetX, data.offsetY);
+    }
+    
     
     //setIsDrawing(true);
     // setStartX(data.offsetX);
@@ -256,6 +284,7 @@ const CanvasComponent = () => {
   const endDrawing = (e) => {
 
     const { offsetX, offsetY } = e.nativeEvent;
+    if(isFillColor) return;
     // context.strokeStyle = penColor;
 
     if(shapeType=='line'){
@@ -330,8 +359,9 @@ const CanvasComponent = () => {
   };
 
   function endDrawingSocket (data) {
-      console.log("end drawing")
-      console.log(data);
+      if(data.isFillColor) return;
+      // console.log("end drawing")
+      // console.log(data);
       // context.strokeStyle = data.penColor;
 
     if(data.shapeType=='line'){
@@ -401,48 +431,51 @@ const CanvasComponent = () => {
 
   //-----------------ColorFill Function---------------------------
 
-  // const floodFill = (startX, startY, targetColor, replacementColor) => {
-  //     // console.log(targetColor +" "+" " +replacementColor);
-  //     const imageData = context.getImageData(0, 0, canvasRef.current.width, canvasRef.current.height);
-  //     const stack = [[startX, startY]];
+   const getColorAtPixel = (x, y) => {
+    // const context = contextRef.current;
+    const pixel = context.getImageData(x, y, 1, 1).data;
+    return `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
+  };
 
-  //     const getColorIndex = (x, y) => (y * imageData.width + x) * 4;
+  const floodFill = (startX, startY, targetColor, replacementColor) => {
+    console.log(startX+" "+startY);
+    // const context = contextRef.current;
+    const imageData = context.getImageData(0, 0, canvasRef.current.width, canvasRef.current.height);
+    const stack = [{ x: startX, y: startY }];
 
-  //     const isSameColor = (x, y) => {
-  //       const index = getColorIndex(x, y);
-  //       const r = imageData.data[index];
-  //       const g = imageData.data[index + 1];
-  //       const b = imageData.data[index + 2];
-  //       return r === targetColor[0] && g === targetColor[1] && b === targetColor[2];
-  //     };
+    while (stack.length > 0) {
+      const { x, y } = stack.pop();
+      // console.log(x+" "+y);
+      // console.log("working");
+      if (x < 0 || x >= canvasRef.current.width || y < 0 || y >= canvasRef.current.height) {
+        continue;
+      }
 
-  //     const setColor = (x, y) => {
-  //       const index = getColorIndex(x, y);
-  //       imageData.data[index] = replacementColor[0];
-  //       imageData.data[index + 1] = replacementColor[1];
-  //       imageData.data[index + 2] = replacementColor[2];
-  //     };
+      const currentIndex = (y * canvasRef.current.width + x) * 4;
+      const currentColor = `rgb(${imageData.data[currentIndex]}, ${imageData.data[currentIndex + 1]}, ${imageData.data[currentIndex + 2]})`;
 
-  //     while (stack.length) {
-  //       const [x, y] = stack.pop();
+      if (currentColor === targetColor) {
+        context.fillStyle = `rgb(${replacementColor[0]}, ${replacementColor[1]}, ${replacementColor[2]})`;
+        context.fillRect(x, y, 1, 1);
 
-  //       if (isSameColor(x, y)) {
-  //         setColor(x, y);
+        imageData.data[currentIndex] = replacementColor[0];
+        imageData.data[currentIndex + 1] = replacementColor[1];
+        imageData.data[currentIndex + 2] = replacementColor[2];
 
-  //         if (x > 0) stack.push([x - 1, y]);
-  //         if (x < canvasRef.current.width - 1) stack.push([x + 1, y]);
-  //         if (y > 0) stack.push([x, y - 1]);
-  //         if (y < canvasRef.current.height - 1) stack.push([x, y + 1]);
-  //       }
-  //     }
-
-  //     context.putImageData(imageData, 0, 0);
-  //   };
+        stack.push({ x: x + 1, y });
+        stack.push({ x: x - 1, y });
+        stack.push({ x, y: y + 1 });
+        stack.push({ x, y: y - 1 });
+      }
+    }
+  };
 
   //-------------clear function------------------------------------
 
   const clearCanvas = () => {
     context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    context.fillStyle='white';
+    context.fillRect(0,0,canvasRef.current.width,canvasRef.current.height);
     setHistory([...history,canvasRef.current.toDataURL()])
     setCurrentStep(currentStep+1);
 
@@ -454,6 +487,8 @@ const CanvasComponent = () => {
 
   function clearCanvasSocket(){
     context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    context.fillStyle='white';
+    context.fillRect(0,0,canvasRef.current.width,canvasRef.current.height);
   };
   //-------------------Undo redo------------------------------------
 
@@ -550,13 +585,12 @@ const CanvasComponent = () => {
                  <img src={isEraser?closeIcon:eraserIcon} className='img' alt/>
               </div>
 
-              <div onClick={() => setIsFillColor(!isFillColor)}><img src={colorFillIcon} className='img' alt/></div>
+              <div onClick={() => setIsFillColor(!isFillColor)}><img src={!isFillColor?colorFillIcon:closeIcon} className='img' alt/></div>
               
               <div onClick={()=>setIsShape(!isShape)}>
                  <img src={shapesIcon} className='img' alt/>
               </div>
-              
-                
+            
                 <div onClick={undo}><img src={undoIcon} className='img' alt/></div>
                 <div onClick={redo}><img src={redoIcon} className='img' alt/></div>
                 <div onClick={download}><img src={downloadIcon} className='img' alt/></div>

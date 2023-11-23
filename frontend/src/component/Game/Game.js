@@ -3,6 +3,7 @@ import ChatBox from './ChatBox';
 import Timer from './Timer';
 import SocketContext from '../../context/SocketContext';
 import GameContext from '../../context/GameContext';
+import Player from './Player'
 import DrawingCanvas from '../Game/DrawingCanvas.js'
 import Logout from '../login/Logout'
 import { useAuth } from '../../context/auth';
@@ -80,14 +81,18 @@ function Game() {
           <div className='game-hint'>{hint}</div>
           <div className='game-logout'><Logout/></div>
       </div>
+
       <div className='game-component'>
-          <div className='game-leaderboard animated-div '>leaderboard</div>
-          <DrawingCanvas className='game-drawCanvas animated-div' true={(drawer==auth.user.username)}/>
-          <div className='animated-div'><ChatBox className='game-chat' true={(drawer!=auth.user.username)} /></div>
+          <div className='game-leaderboard animated-div'>
+            { Object.keys(game.player_names).map((data,index)=>{
+            return <Player user={data}/>
+            })}
+          </div>
+          <div className='game-drawCanvas animated-div'><DrawingCanvas/></div>
+          <div className='game-chat-inner animated-div'><ChatBox/></div>
       </div>
       
     </div>
-    
   );
 }
 

@@ -3,16 +3,17 @@ import Logout from '../login/Logout'
 import { useContext,useRef } from 'react'
 import GameContext from '../../context/GameContext'
 import Player from './Player'
+import { toast } from "react-toastify";
 import SocketContext from '../../context/SocketContext'
+import UserContext from '../../context/UserContext'
 import ChatBox from './ChatBox'
 import GameForm from './GameForm'
-import { useAuth} from "../../context/auth";
 import './Lobby.css'
 
 const Lobby = () => {
   const {game} = useContext(GameContext)
   const {socket} = useContext(SocketContext)
-  const [auth,setAuth]=useAuth('');
+  const {user} = useContext(UserContext)
   console.log(game);
   const startGame = () =>{
       socket.emit("start_game",{room : game.roomNo})
@@ -28,9 +29,9 @@ const Lobby = () => {
 
         try {
           document.execCommand('copy');
-          alert('Copied to clipboard: ' + inputRef.current.value);
+          toast.success('Copied to clipboard: ' + inputRef.current.value);
         } catch (err) {
-          console.error('Unable to copy to clipboard', err);
+          toast.error('Unable to copy to clipboard', err);
         }
       }
     };
@@ -38,27 +39,32 @@ const Lobby = () => {
   return (
    <div className='lobby-cont'>
       <div className='lobby-header animated-div'>
-        <h1>{game.type} Room</h1>
+        <h1 className='lobby-heading'>{game.type} Room</h1>
         <div className='lobby-logout'><Logout/></div>
       </div>
+
+      
+      <div className='gameForm-outer animated-div'><GameForm/></div>
+  
 
       <div className='lobby-components'>
         <div className='lobby animated-div'>
           { Object.keys(game.player_names).map((data,index)=>{
-            if(game.player_names[data].active==true)
-              return <Player user={data}/>
+          return <Player user={data}/>
           })}
         </div>
-        <div className='gameForm animated-div'><GameForm/></div>
-        <div className='animated-div' ><ChatBox true={true}/></div>
+        <div className='gameForm-inner animated-div'><GameForm/></div>
+        <div className='gamechat animated-div'><ChatBox/></div>
       </div>
 
       <div class="lobby-copy animated-div">
         <input value={'RoomCode'} ref={inputRef} type="text"/>
-        <button className='lobbycopy-copy-btn' type="submit" onClick={copyToClipboard}>Copy</button>
+        <button className='lobbycopy-copy-btn' type="submit" onClick={copyToClipboard}>
+          Copy
+        </button>
       </div>
       
-      {(auth.user.username==game.admin_name)? <button onClick={()=>{startGame()}}>StartGame</button>:<div></div>}
+      {/* {(user==game.admin_name)? <button onClick={()=>{startGame()}}>StartGame</button>:<div></div>} */}
       
     </div>
   )

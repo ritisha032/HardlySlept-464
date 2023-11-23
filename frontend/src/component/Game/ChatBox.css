@@ -1,9 +1,12 @@
 .chat-container {
-    max-width: 400px;
     height: 500px;
-    margin-right: 25px;
-    border: 2px solid #323232;
-    box-shadow: 4px 4px #323232;
+    border-radius: 5px;
+    /* background-color: aqua; */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: space-between;
 
 
     --input-focus: #2d8cf0;
@@ -14,28 +17,31 @@
     --main-color: #323232;
 }
 
-.chatBox {
-    width: 400px;
+.chatArea {
+    /* width: 400px; */
     height: 450px;
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
     /* background-color: aqua; */
+    border: 2px solid #323232;
+    box-shadow: 4px 4px #323232;
     overflow: auto;
 }
 
 .send {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
+    /* background-color: red; */
     gap: 10px;
-    margin: 5px 0 0 0;
 
 }
 
 .chat-msg-field {
     /* margin-left:px; */
-    width: 270px;
-    height: 20px;
+    width: 70%;
+    height: 60%;
     border-radius: 5px;
     border: 2px solid var(--main-color);
     background-color: var(--bg-color);
