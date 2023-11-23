@@ -50,7 +50,7 @@ const Lobby = () => {
           })}
         </div>
         <div className='gameForm animated-div'><GameForm/></div>
-        <div className='animated-div'><ChatBox/></div>
+        <div className='animated-div' ><ChatBox true={true}/></div>
       </div>
 
       <div class="lobby-copy animated-div">

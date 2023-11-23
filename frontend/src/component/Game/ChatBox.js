@@ -7,7 +7,7 @@ import { useAuth} from "../../context/auth";
 
 
 
-function ChatBox() {
+function ChatBox(props) {
   const [message,setMessage] = useState("");
   const [messageReceived,setMessageReceived] = useState([]);
   const {game} = useContext(GameContext)
@@ -37,8 +37,8 @@ function ChatBox() {
         <Message {...ele} index={index}/>
         )}
 
-      </div >
-
+      </div>
+      { (props.true==true)?
       <div className='send'>
 
         <input 
@@ -49,7 +49,7 @@ function ChatBox() {
         }}/>
 
         <button className='chatSend-btn' onClick={sendMessage}>Send</button>
-      </div>
+      </div>:<></>}
     </div>
   )
 }

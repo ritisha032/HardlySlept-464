@@ -26,6 +26,11 @@ function Game() {
     console.log(word);
     console.log("sendChosenWord");
     }
+    useEffect(()=>{
+      if(score!=null){
+        console.log(score);
+      }
+    },[score])
   
   useEffect(()=>{
     console.log("useEffect")

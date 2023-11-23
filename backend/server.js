@@ -49,9 +49,13 @@ var guessWord = [
   "angle",
   "eva",
 ];
+var scoreData={};
 function randomWord() {
   var i = Math.floor(Math.random() * guessWord.length);
   return guessWord[i];
+}
+function calculateScore(total,spent){
+    return Math.max(50,Math.floor((spent/total)*150));
 }
 //Game Logic
 async function startGame(obj) {
@@ -81,7 +85,7 @@ async function startGame(obj) {
   }
 
   function emitScore(){
-    io.to(obj.gameData.roomNo).emit("score",scoreData);
+    io.to(obj.gameData.roomNo).emit("score",obj.gameData.player_names);
   }
 
   //---------------------------------
@@ -94,7 +98,7 @@ async function startGame(obj) {
       //setting timer of the round
       obj.gameData.CurrentTime = obj.gameData.TotalTime;
       var t=15;
-
+      
       //if the player is not active, go to next player
       //getting username of the player
       if (obj.players[j].active == false) continue; // seeing if the player is active
@@ -103,14 +107,14 @@ async function startGame(obj) {
       obj.gameData.drawer=obj.players[j].user;
       console.log(obj.gameData.drawer)
       var scoreData = {}; //keep track of score of players
-      const Listener1 =  ()=>{
+      const DisconnectListener =  ()=>{
         console.log("disconnect inside game loop")
         emitPhaseChange("score");
         obj.gameData.CurrentTime=0;
         t=0;
       }
       //attaching listener to see if the drawer leaves 
-      obj.players[j].id.on("disconnect",Listener1);
+      obj.players[j].id.on("disconnect", DisconnectListener);
 
       //create an options array to pass to the drawer to choose from
       var options = [];
@@ -192,10 +196,17 @@ async function startGame(obj) {
         }, 1000);
       });
       await promise2;
-
+      
       emitPhaseChange("score");
-      obj.players[j].id.off("disconnect",Listener1);
-      // emitScore();
+      obj.players[j].id.off("disconnect", DisconnectListener);
+      Object.keys(obj.gameData.player_names).map((data,index)=>{
+        obj.gameData.player_names[data].score+=obj.gameData.player_names[data].roundScore;
+        
+      })
+      emitScore();
+      Object.keys(obj.gameData.player_names).map((data,index)=>{
+        obj.gameData.player_names[data].roundScore=0;
+      })
     }
   }
   console.log("game over");
@@ -233,7 +244,7 @@ io.on("connection", (socket) => {
       },
     };
 
-    game[rm].gameData.player_names[data.user] = { active: true, score: 0 };
+    game[rm].gameData.player_names[data.user] = { active: true, score: 0 ,roundScore:0};
     socket.emit("game_data", game[rm].gameData); //emitting game data to move to lobby
     //adding listner to those sockets
     socket.on("start_game", () => {
@@ -290,6 +301,7 @@ io.on("connection", (socket) => {
             playerNameObject[data.user] = {
               active: true,
               score: 0,
+              roundScore:0
             };
           }
           console.log("adding the new player");
@@ -329,7 +341,7 @@ io.on("connection", (socket) => {
       console.log(data.message + "==" + game[data.room].word);
       if (data.message.toLowerCase() === game[data.room].word.toLowerCase())
         check = 1;
-        //scoreData[data.user]=150;
+      game[data.room].gameData.player_names[data.user].roundScore = Math.max(calculateScore(game[data.room].gameData.TotalTime,game[data.room].gameData.CurrentTime),game[data.room].gameData.player_names[data.user].roundScore);
       socket.to(data.room).emit("receive_message", { ...data, check });
       socket.emit("receive_message", { ...data, check });
       console.log(check);
