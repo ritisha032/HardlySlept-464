@@ -1,5 +1,4 @@
 import React, { useState,useEffect, useContext } from "react";
-
 import './Login-SignUp.css'
 import emailIcon from '../Assets/email.png'
 import passwordIcon from '../Assets/password.png'
@@ -8,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth} from "../../context/auth";
 import axios from "axios";
 import { toast } from "react-toastify";
-import UserContext from "../../context/UserContext";
 
 
 function Login(){
@@ -23,14 +21,7 @@ function Login(){
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false);
     const navigate=useNavigate();
-    const {user,setUser} = useContext(UserContext)
-    var username;
-    useEffect(()=>{
-        if(user!=null){
-            console.log("trying to read from context "+user);
-            navigate("/HomePage");
-        }  
-      },[user])
+    
 
     const handleSubmit = async (e) => {
         console.log(formErrors.email);
@@ -55,8 +46,7 @@ function Login(){
                     token:res.data.token,
           
                   });
-                  username = res.data.user.username;
-                  setUser(username); //runs useState
+                  navigate("/HomePage");
                   localStorage.setItem('auth',JSON.stringify(res.data));
           } else {
             

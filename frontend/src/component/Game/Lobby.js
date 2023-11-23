@@ -4,15 +4,15 @@ import { useContext,useRef } from 'react'
 import GameContext from '../../context/GameContext'
 import Player from './Player'
 import SocketContext from '../../context/SocketContext'
-import UserContext from '../../context/UserContext'
 import ChatBox from './ChatBox'
 import GameForm from './GameForm'
+import { useAuth} from "../../context/auth";
 import './Lobby.css'
 
 const Lobby = () => {
   const {game} = useContext(GameContext)
   const {socket} = useContext(SocketContext)
-  const {user} = useContext(UserContext)
+  const [auth,setAuth]=useAuth('');
   console.log(game);
   const startGame = () =>{
       socket.emit("start_game",{room : game.roomNo})
@@ -45,11 +45,12 @@ const Lobby = () => {
       <div className='lobby-components'>
         <div className='lobby animated-div'>
           { Object.keys(game.player_names).map((data,index)=>{
-          return <Player user={data}/>
+            if(game.player_names[data].active==true)
+              return <Player user={data}/>
           })}
         </div>
         <div className='gameForm animated-div'><GameForm/></div>
-        <div className='animated-div'><ChatBox/></div>
+        <div className='animated-div' ><ChatBox true={true}/></div>
       </div>
 
       <div class="lobby-copy animated-div">
@@ -57,7 +58,7 @@ const Lobby = () => {
         <button className='lobbycopy-copy-btn' type="submit" onClick={copyToClipboard}>Copy</button>
       </div>
       
-      {(user==game.admin_name)? <button onClick={()=>{startGame()}}>StartGame</button>:<div></div>}
+      {(auth.user.username==game.admin_name)? <button onClick={()=>{startGame()}}>StartGame</button>:<div></div>}
       
     </div>
   )

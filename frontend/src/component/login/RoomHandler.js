@@ -3,11 +3,12 @@ import {useEffect, useState,useContext} from 'react';
 import { useNavigate } from 'react-router-dom';
 import {io} from 'socket.io-client';
 import GameContext from '../../context/GameContext';
-import UserContext from '../../context/UserContext';
+import { useAuth} from "../../context/auth";
 import { toast } from "react-toastify";
 import SocketContext from '../../context/SocketContext';
 import './RoomHandler.css'
 import Logout from './Logout';
+import GameRoom from '../Game/GameRoom'
 const socketTemp = io.connect('http://localhost:3001');
 
 const RoomHandler = () => {
@@ -15,28 +16,25 @@ const RoomHandler = () => {
     const navigate=useNavigate();
     const {setSocket,socket} =useContext(SocketContext);
     const {game,setGame} = useContext(GameContext);
-    const {user} = useContext(UserContext)
-    //var username = user
+    const [auth,setAuth]=useAuth('');
     const [room,setRoom] = useState("");
     const handleChange=(e)=>{
         setRoom(e.target.value);
     };
+    const params = new URLSearchParams(window.location.search);
 
     useEffect(()=>{
-      if(socket==null)
-      setSocket(socketTemp);
+      if(socket==null){
+        setSocket(socketTemp);
+        console.log(socketTemp);
+        console.log("sokcet is null");
+      }
+        
       if(socket!=null){
-        socket.on("no_game",(data)=>{
-          toast.warning(data.message);
-        })
-        socket.on("game_data",(data)=>{
-          setGame(data);
-          console.log("i am in room handler");
-        console.log(data);
-          localStorage.setItem('game',JSON.stringify(data));
-
-          
-        })
+        const roomurl = params.get("room")
+        roomurl?socket.emit("join_room",{type:"url",user:auth.user.username,room:roomurl}):
+        socket.on("no_game",(data)=>{ toast.warning(data.message);  })
+        socket.on("game_data",(data)=>{ setGame(data);})
       }
     },[socket])
 
@@ -44,21 +42,17 @@ const RoomHandler = () => {
     useEffect(()=>{
       if(game!=null){
         console.log("game data = " + game);
-        navigate(`/${game.roomNo}`);
+        navigate(`/game/?room=${game.roomNo}`);
       }
       
     },[game])
-    const createRoom = async (type) =>{
-        console.log(user + "in create room call")
-        await socket.emit("create_room",{type:type,user:user});
-        // socket.on("room_created", (data) => {
-        //     setGame(data) // runs use State
-        //     console.log(data);
-        // })
+
+ async function createRoom(type){
+        await socket.emit("create_room",{type:type,user:auth.user.username});
     };
 
-    const joinRoom = async (type) =>{
-      await socket.emit("join_room",{type:type,user:user,room:room});
+    async function joinRoom(type){
+      await socket.emit("join_room",{type:type,user:auth.user.username,room:room});
       socket.on("room_created",(data) => {
           setGame(data) // runs use State
           console.log(data);
@@ -68,7 +62,10 @@ const RoomHandler = () => {
 
   return (
     <div>
-        {/* { (socket==null)?<div>Loading</div>: */}
+        {
+          (game==null)?
+          (socket==null)?
+            <div>Loading</div>:
         <div className="room-cont">
 
             <button id="publicButton" className='btn'
@@ -94,8 +91,8 @@ const RoomHandler = () => {
 
             <Logout className='btn'/>
 
-        </div>
-        {/* } */}
+        </div>:<GameRoom/>
+        }
     </div>
   )
 }
