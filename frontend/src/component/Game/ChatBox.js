@@ -29,18 +29,15 @@ function ChatBox(props) {
 
 
   return (
-    <div className='chat-container'>
+     <div className='chat-container'>
 
-      <div className='chatBox'>
-
+      <div className='chatArea'>
         {messageReceived.map((ele,index)=>
         <Message {...ele} index={index}/>
         )}
+      </div >
 
-      </div>
-      { (props.true==true)?
       <div className='send'>
-
         <input 
           className='chat-msg-field'
           placeholder="Message..." 
@@ -49,7 +46,7 @@ function ChatBox(props) {
         }}/>
 
         <button className='chatSend-btn' onClick={sendMessage}>Send</button>
-      </div>:<></>}
+      </div>
     </div>
   )
 }

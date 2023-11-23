@@ -1,8 +1,9 @@
 import React from 'react'
+import './Player.css'
 
 function Player(props) {
   return (
-    <div>{props.user}</div>
+      <div className='player-cont'>{props.user}</div>
   )
 }
 

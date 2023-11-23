@@ -1,0 +1,14 @@
+.player-cont {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    background-color: aqua;
+    border-radius: 5px;
+    width: 90%;
+    height: 7%;
+    border: 2px solid black;
+    border: 1px solid var(--main-color);
+    box-shadow: 2px 2px var(--main-color);
+    font-family: 'Pixelify Sans', sans-serif;
+}

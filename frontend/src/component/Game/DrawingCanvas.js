@@ -117,7 +117,7 @@ const CanvasComponent = () => {
 
     if(isFillColor){
         const targetColor= getColorAtPixel(offsetX, offsetY);
-        const replacementColor = [255, 0, 0];
+        const replacementColor =[255, 0, 0] ;
 
         if (targetColor !== `rgb(${replacementColor[0]}, ${replacementColor[1]}, ${replacementColor[2]})`) {
             floodFill(offsetX, offsetY, targetColor, replacementColor);
@@ -474,6 +474,8 @@ const CanvasComponent = () => {
 
   const clearCanvas = () => {
     context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    context.fillStyle='white';
+    context.fillRect(0,0,canvasRef.current.width,canvasRef.current.height);
     setHistory([...history,canvasRef.current.toDataURL()])
     setCurrentStep(currentStep+1);
 
@@ -485,6 +487,8 @@ const CanvasComponent = () => {
 
   function clearCanvasSocket(){
     context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    context.fillStyle='white';
+    context.fillRect(0,0,canvasRef.current.width,canvasRef.current.height);
   };
   //-------------------Undo redo------------------------------------
 

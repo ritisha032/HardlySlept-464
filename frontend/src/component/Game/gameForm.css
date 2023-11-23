@@ -2,16 +2,12 @@
     font-family: 'Arial', sans-serif;
     display: flex;
     flex-direction: column;
-    /* justify-content: center; */
+    justify-content: center;
     align-items: center;
     gap: 10px;
-    width: 500px;
-    height: 500px;
-    /* margin: 0 auto; */
-    /* padding: 20px; */
-    background-color: #f8f8f8;
-    border: 1px solid #ddd;
     border-radius: 5px;
+    /* border: 1px solid #ddd; */
+
     /* border: 2px solid #323232;
     box-shadow: 4px 4px #323232; */
 }
@@ -26,6 +22,7 @@
 }
 
 .gf-label {
+    /* font-style: italic; */
     margin-bottom: 5px;
     font-weight: bold;
 }
@@ -46,8 +43,9 @@
     /* margin: 20px 0 20px 400px; */
     width: 120px;
     height: 40px;
-    margin-left: 190px;
+    /* margin-left: 190px; */
     border-radius: 5px;
+    margin-bottom: 10%;
     border: 2px solid #323232;
     background-color: #fff;
     box-shadow: 4px 4px #323232;
