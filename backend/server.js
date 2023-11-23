@@ -4,11 +4,18 @@ import dbConnect from "./config/database.js";
 import morgan from "morgan";
 import authRoutes from "./routes/authRoutes.js";
 import cors from "cors";
+import cookieParser from "cookie-parser";
+
 
 //<!----for socket.io server----!>
 import http from "http";
 import { Server } from "socket.io";
 import { isObjectIdOrHexString } from "mongoose";
+import Profile from "./routes/Profile.js";
+import {cloud }  from "./config/cloud.js";
+import fileUpload from "express-fileupload";
+
+
 //<!----for socket.io server----!>
 
 const app = express();
@@ -18,7 +25,19 @@ dotenv.config();
 //middleware
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(cookieParser());
+
 app.use(cors());
+
+app.use(
+	fileUpload({
+		useTempFiles:true,
+		tempFileDir:"/tmp",
+	})
+)
+//cloudinary connection
+cloud();
+
 
 //<!---------socket related logic -------------------!>//
 const room = { private: [], public: [] };
@@ -378,6 +397,10 @@ function S4() {
 const guid = () => S4().toLowerCase();
 //<!------function to generate random no ---------!>//
 
+app.use("/api/v1", authRoutes);
+app.use("/api/v1/profile", Profile);
+
+
 app.get("/", (req, res) => {
   res.send(`<h1>Welcome to Scribble Game Backend</h1>`);
 });
@@ -392,4 +415,4 @@ app.listen(PORT, () => {
 });
 dbConnect();
 
-app.use("/api/v1", authRoutes);
+
