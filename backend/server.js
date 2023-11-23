@@ -113,6 +113,11 @@ async function startGame(obj) {
         obj.gameData.CurrentTime=0;
         t=0;
       }
+      const CanvasListener = (data) =>{
+        obj.players[j].id.to(obj.gameData.roomNo).emit("receive_canvas_data",data);
+        console.log("inside listener for canvas");
+      }
+      obj.players[j].id.on("send_canvas_data",CanvasListener);
       //attaching listener to see if the drawer leaves 
       obj.players[j].id.on("disconnect", DisconnectListener);
 
@@ -199,6 +204,7 @@ async function startGame(obj) {
       
       emitPhaseChange("score");
       obj.players[j].id.off("disconnect", DisconnectListener);
+      obj.players[j].id.off("send_canvas_data",CanvasListener);
       Object.keys(obj.gameData.player_names).map((data,index)=>{
         obj.gameData.player_names[data].score+=obj.gameData.player_names[data].roundScore;
         

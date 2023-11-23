@@ -51,7 +51,7 @@ const CanvasComponent = () => {
 
   useEffect(()=>{
     if(context!=null){
-      socket.on('receive_data',(data)=>{
+      socket.on('receive_canvas_data',(data)=>{
         console.log("getting info");
         setPenSize(data.penSize);
       if(data.function=='startDrawingsocket'){
@@ -139,7 +139,7 @@ const CanvasComponent = () => {
         function :'startDrawingsocket'
       };
 
-      socket.emit('send_data', data);
+      socket.emit('send_canvas_data', data);
     }
   };
 
@@ -231,7 +231,7 @@ const CanvasComponent = () => {
       function :'drawsocket'
     };
 
-    socket.emit('send_data', data);
+    socket.emit('send_canvas_data', data);
 
   };
 
@@ -314,7 +314,7 @@ const CanvasComponent = () => {
       function :'endDrawingSocket'
     };
 
-    socket.emit('send_data', data);
+    socket.emit('send_canvas_data', data);
     setIsDrawing(false);
       
     //remove useless canvas...
@@ -449,7 +449,7 @@ const CanvasComponent = () => {
       const data = {
         function :'clearCanvasSocket'
       };
-    socket.emit('send_data', data);
+    socket.emit('send_canvas_data', data);
   };
 
   function clearCanvasSocket(){
@@ -472,7 +472,7 @@ const CanvasComponent = () => {
       function :'undoRedoSocket'
       };
 
-      socket.emit('send_data', data);
+      socket.emit('send_canvas_data', data);
       setCurrentStep(currentStep-1);
     }     
   };
@@ -489,7 +489,7 @@ const CanvasComponent = () => {
       dataURL : history[currentStep+1],
       function :'undoRedoSocket'
       };
-      socket.emit('send_data', data);
+      socket.emit('send_canvas_data', data);
       setCurrentStep(currentStep + 1);
     }
   };
