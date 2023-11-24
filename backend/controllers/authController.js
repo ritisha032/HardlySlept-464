@@ -372,10 +372,11 @@ export const getUser=async(req,res)=>{
 
     const user=await User.findById(userId).populate("additionalDetails");
 
-    console.log(user.additionalDetails);
+    console.log(user);
 
     return res.json({
-      additionalDetails:user.additionalDetails
+      additionalDetails:user.additionalDetails,
+      image:user.image
     }).status(200);
 
   }

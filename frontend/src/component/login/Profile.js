@@ -13,6 +13,7 @@ const MyComponent = () => {
     dateOfBirth: "2002-01-03",
     contactNumber:123456789,
     about: "abc",
+    image:""
   });
   const [ishistory, setIsHistory] = useState(true);
 
@@ -58,6 +59,8 @@ const MyComponent = () => {
           dateOfBirth: response.data.additionalDetails.dateOfBirth,
           contactNumber: response.data.additionalDetails.contactNumber,
           about: response.data.additionalDetails.about,
+          image:response.data.image
+        
         });
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -179,6 +182,15 @@ const MyComponent = () => {
                 value={formData.about}
               />
             </div>
+            <label htmlFor="image">Image:</label>
+            <img
+                  src={formData.image}
+                  alt="Profile"
+                  style={{ maxWidth: "200px", maxHeight: "200px" }}
+                />
+              
+            
+
             <button type="submit">Update</button>
           </form>
           <button type="submit" onClick={handleDelete}>Delete Account</button>
