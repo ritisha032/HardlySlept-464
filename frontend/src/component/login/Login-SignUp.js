@@ -2,11 +2,12 @@ import React from 'react'
 import './Login-SignUp.css'
 import Login from './Login'
 import SignUp from './SignUp'
+import logo from './logo.png'
 
 const LoginSignUp = () => {
   return (
     <div className='container'>
- 
+        <div className='login-logo'><img src={logo}/></div>;
         <div class="wrapper">
                 <div class="card-switch">
                     <label class="switch">
