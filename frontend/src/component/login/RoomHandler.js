@@ -51,13 +51,13 @@ const RoomHandler = () => {
 
     useEffect(()=>{
       console.log("changing setCreateRoom")
-      if(socket!=null && setCreateRoom!=null){
+      if(socket!=null && createRoom!=null){
         socket.emit("create_room",createRoom);
       }
     },[createRoom]);
 
     useEffect(()=>{
-      if(socket!=null){
+      if(socket!=null && joinRoom!=null ){
         socket.emit("join_room",joinRoom);
       }
     },[joinRoom])
@@ -81,7 +81,8 @@ const RoomHandler = () => {
   function joinRoomFun(type){
         const socketTemp = io.connect('http://localhost:3001') ;
         setSocket(socketTemp);
-        setJoinRoom(...{type:type,user:auth.user.username,room:room});
+        const data={type:type,user:auth.user.username,room:room};
+        setJoinRoom(data);
         console.log("join room button");
      
     }

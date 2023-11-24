@@ -50,6 +50,7 @@ const Lobby = () => {
       <div className='lobby-components'>
         <div className='lobby animated-div'>
           { Object.keys(game.player_names).map((data,index)=>{
+            if(game.player_names[data].active==true)
           return <Player user={data}/>
           })}
         </div>

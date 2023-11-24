@@ -273,6 +273,17 @@ function startGameSocket(gameObj,room,userSocket){
 });
 }
 
+function addLobbySocket(userSocket,room){
+  userSocket.on("lobby_round_emit",(data)=>{
+    game[room].gameData.TotalRounds=data;
+    userSocket.to(room).emit("lobby_round_emit",data)
+ }) 
+ userSocket.on("lobby_duration_emit",(data)=>{
+    game[room].gameData.TotalTime=data;
+    userSocket.to(room).emit("lobby_duration_emit",data);
+ })
+}
+
 function disconnectSocket(gameObj,room,user,userSocket){
   userSocket.on("disconnect",()=>{
     console.log("disconnect fired");
@@ -311,7 +322,7 @@ function adminChange(gameObj,room,minActivePlayer){
     gameObj.admin.id = nextAdmin.id;
     gameObj.gameData.admin_name = nextAdmin.user;
     startGameSocket(gameObj,room,gameObj.admin.id);
-
+    addLobbySocket(gameObj.admin.id,room);
     io.to(room).emit("game_data",game[room].gameData);
   }
   else{
@@ -380,7 +391,8 @@ io.on("connection", (socket) => {
     game[rm].gameData.player_names[data.user] = { active: true, score: 0, roundScore:0, restrict_count:0, mute:false };
     socket.emit("game_data", game[rm].gameData); //emitting game data to move to lobby
     //adding listner to those sockets
-    startGameSocket(game[rm],rm,socket); 
+    startGameSocket(game[rm],rm,socket);
+    addLobbySocket(socket,rm); 
     disconnectSocket(game[rm],rm,data.user,socket);
     //console.log(game[rm]);
 
@@ -408,8 +420,6 @@ io.on("connection", (socket) => {
             user: data.user,
             id: socket,
             active:true,
-            restrict_count:0,
-            mute:false 
           });
           if(data.user in playerNameObject){
             playerNameObject[data.user].active = true;
@@ -418,7 +428,9 @@ io.on("connection", (socket) => {
             playerNameObject[data.user] = {
               active: true,
               score: 0,
-              roundScore:0
+              roundScore:0,
+              restrict_count:0,
+              mute:false 
             };
           }
           console.log("adding the new player");
@@ -453,7 +465,8 @@ io.on("connection", (socket) => {
       console.log(data.message + "==" + game[data.room].word);
       if (data.message.toLowerCase() === game[data.room].word.toLowerCase()){
         check = 1;
-        game[data.room].gameData.player_names[data.user].roundScore = Math.max(calculateScore(game[data.room].gameData.TotalTime,game[data.room].gameData.CurrentTime),game[data.room].gameData.player_names[data.user].roundScore);  
+        game[data.room].gameData.player_names[data.user].roundScore = Math.max(calculateScore(game[data.room].gameData.TotalTime,game[data.room].gameData.CurrentTime),game[data.room].gameData.player_names[data.user].roundScore);
+        game[data.room].gameData.player_names[game[data.room].gameData.drawer].roundScore+=game[data.room].gameData.player_names[data.user].roundScore;
       }
       if(replaceWordsWithAsterisks(data.message).check==2){
         check=2;

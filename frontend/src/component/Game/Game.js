@@ -94,6 +94,7 @@ function Game() {
       <div className='game-component'>
           <div className='game-leaderboard animated-div'>
             {(score!=null)? Object.keys(game.player_names).map((data,index)=>{
+              if(score[data].active==true)
             return <Player user={data} score={score[data]}/>
             }):<></>}
           </div>
