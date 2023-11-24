@@ -14,8 +14,9 @@ export const signup = async (req, res) => {
   try {
     //fetch details from the request body
     const { name, email, username, password, password1, otp } = req.body;
+    console.log(name,email,username,password,password1);
 
-    if (!name || !email || !username || !password || password1 || !otp) {
+    if (!name || !email || !username || !password || !otp ) {
       return res.status(403).json({
         success: false,
         message: "All fields are required",
@@ -107,7 +108,7 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
+    console.log(email,password);
     if (!email || !password) {
       return res
         .json({
@@ -177,16 +178,17 @@ export const sendOTP = async (req, res) => {
   try {
     //fetch email from request ki body
     const { email } = req.body;
+    console.log(email);
 
     //check if user already exist
     const checkUserPresent = await User.findOne({ email });
-
+    console.log(checkUserPresent);
     ///if user already exist , then return a response
     if (checkUserPresent) {
-      return res.status(401).json({
+      return res.json({
         success: false,
         message: "User already registered",
-      });
+      }).status(401);
     }
 
     //generate otp

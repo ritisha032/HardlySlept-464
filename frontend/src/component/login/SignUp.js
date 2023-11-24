@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 
 import "./Login-SignUp.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
+import DataContext from "../../context/DataContext";
+
 
 function SignUp() {
   function generateUniqueUsername(username) {
@@ -26,6 +29,12 @@ function SignUp() {
   });
   const [formErrors, setFormErrors] = useState({});
   const [isSubmit, setIsSubmit] = useState(false);
+  const { data, setData } = useContext(DataContext);
+  useEffect(() => {
+    console.log("data= ", data);
+  }, [data]);
+
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -34,15 +43,37 @@ function SignUp() {
     setFormErrors(validate(formValues));
 
     if (Object.keys(formErrors).length === 0) {
+      const signUpData={
+        name:formValues.name,
+        email:formValues.email,
+        password:formValues.password,
+        confirmPassword:formValues.confirmPassword,
+        username:formValues.username,
+      }
+      //console.log("signUpData= ",signUpData);
       try {
-        const res = await axios.post(
-          `${process.env.REACT_APP_API}/api/v1/signup`,
-          { name, email, username, password, password1 }
-        );
+        //console.log("formValues= ",formValues);
+        setData(signUpData);
+    
+        const res=await axios.post(`${process.env.REACT_APP_API}/api/v1/sendotp`,
+        { email});
+        //console.log("otp status= ",res.data.success);
+        //console.log("data= ",data);
 
-        if (res && res.data.success) {
+        if(res.data.success)
+        {
+          toast.success(res.data.message);
+
+          navigate("/otp");
+        }
+        else
+        {
+          toast.warning(res.data.message);
+        }
+
+        /*if (res && res.data.success) {
           toast.success("registered successfully");
-          navigate("/login");
+          navigate("/");
         } else {
           toast.warning(res.data.message);
           if (res.data.message === "Username already registered") {
@@ -50,13 +81,14 @@ function SignUp() {
 
             //console.log(generateUniqueUsername(username));
           }
-        }
+        }*/
       } catch (error) {
         toast.warning(error);
       }
     }
   };
 
+  
   const handleChange = (e) => {
     if (e.target.name == "name") setName(e.target.value);
     if (e.target.name == "email") setEmail(e.target.value);
