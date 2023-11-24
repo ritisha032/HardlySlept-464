@@ -11,3 +11,25 @@
     box-shadow: 2px 2px var(--main-color);
     /* font-family: 'Pixelify Sans', sans-serif; */
 }
+
+@keyframes fadeInUp {
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0%);
+        opacity: 1;
+    }
+}
+
+.animated-div {
+    animation: 0.5s fadeInUp;
+}
+
+.player-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

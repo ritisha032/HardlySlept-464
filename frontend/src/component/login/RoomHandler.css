@@ -61,6 +61,34 @@
     gap: 1.5rem;
 }
 
+.rcAction-btn {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    gap: 7px;
+}
+
+.profile-btn {
+    background: #FBCA1F;
+    font-family: inherit;
+    padding: 0.6em 1.3em;
+    font-weight: 900;
+    font-size: 18px;
+    border: 3px solid black;
+    border-radius: 0.4em;
+    box-shadow: 0.1em 0.1em;
+}
+
+.profile-btn:hover {
+    transform: translate(-0.05em, -0.05em);
+    box-shadow: 0.15em 0.15em;
+}
+
+.profile-btn:active {
+    transform: translate(0.05em, 0.05em);
+    box-shadow: 0.05em 0.05em;
+}
+
 @media only screen and (max-width: 600px) {
     .room-cont {
         width: 300px;
