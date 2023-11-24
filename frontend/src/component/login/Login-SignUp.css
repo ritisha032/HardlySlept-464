@@ -1,9 +1,30 @@
+.container {
+    /* background-color: #2d8cf0; */
+    /* margin-top:25%; */
+    margin-top: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-logo {
+    display: flex;
+    /* margin-top: 10%; */
+    position: absolute;
+    flex-direction: center;
+    justify-content: center;
+}
 
 .wrapper {
-    /* width: 0%;
-    margin: 250px; */
-    margin: 350px 0px 0px 750px;
-   --input-focus: #2d8cf0;
+    /* width: 0%;*/
+    /* margin: 250px;  */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: aqua;
+    --input-focus: #2d8cf0;
     --font-color: #323232;
     --font-color-sub: #666;
     --bg-color: #fff;
@@ -16,8 +37,9 @@
 
 /* switch card */
 .switch {
-    transform: translateY(-200px);
-    position: relative;
+    /* transform: translateY(-200px); */
+    position: absolute;
+    top: 25%;
     display: flex;
     flex-direction: column;
     justify-content: center;

@@ -1,24 +1,51 @@
 import mongoose from "mongoose";
-const userSchema=new mongoose.Schema({
-    name:{
-        type:String,
-        required:true,
-        trim:true,
+import Game from "./Game.js";
+
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
     },
-    email:{
-        type:String,
-        required:true,
-        unique:true,
+    email: {
+      type: String,
+      required: true,
+      unique: true,
     },
-    username:{
-        type:String,
-        required:true,
-        unique:true
+    username: {
+      type: String,
+      required: true,
+      unique: true,
     },
-    password:{
-        type:String,
-        required:true,
+    password: {
+      type: String,
+      required: true,
     },
-    
-},{timestamps:true})
-export default mongoose.model("User",userSchema);
+    image: {
+      type: String,
+      //required: true,
+    },
+    additionalDetails: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Profile",
+    },
+    token :{
+      type:String,
+  },
+  resetPasswordExpires: {
+      type:Date,
+  },
+  gameHistory:[
+    {
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"Game",
+    }
+]
+
+
+  },
+  { timestamps: true }
+);
+export default mongoose.model("User", userSchema);

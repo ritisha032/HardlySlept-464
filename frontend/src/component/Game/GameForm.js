@@ -1,9 +1,18 @@
-import React, { useState } from 'react';
+import React, { useContext,useState } from 'react';
+import GameContext from '../../context/GameContext'
+import SocketContext from '../../context/SocketContext'
 import  './gameForm.css'
 
 function GameForm() {
     const [rounds,setRounds]=useState(1);
     const [duration,setDuration]=useState(30);
+    const {game} = useContext(GameContext)
+    const {socket} = useContext(SocketContext)
+
+    const startGame = () =>{
+      socket.emit("start_game",{room : game.roomNo})
+      console.log("fired start game")
+    }
 
     return (
       <div className="gf-cont">
@@ -43,10 +52,8 @@ function GameForm() {
               <option>90</option>
             </select>
           </div>
-
-          <button className="gf-start-btn">Start Game</button>
-
       </form>
+      <button className="gf-start-btn" onClick={()=>{startGame()}}>Start Game</button>
     </div> 
     );
 }

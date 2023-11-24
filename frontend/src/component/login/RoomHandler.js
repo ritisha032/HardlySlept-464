@@ -95,6 +95,8 @@ const RoomHandler = () => {
 
             <Logout className='btn'/>
 
+            <button id="profile" onClick={(() => navigate('/profile'))}>Profile</button>
+
         </div>:<GameRoom/>
         }
     </div>

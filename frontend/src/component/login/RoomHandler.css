@@ -60,3 +60,19 @@
     display: flex;
     gap: 1.5rem;
 }
+
+@media only screen and (max-width: 600px) {
+    .room-cont {
+        width: 300px;
+    }
+
+    .publicRoom-cont {
+        display: flex;
+        gap: 15px;
+        flex-direction: column;
+    }
+
+    .msg-field {
+        width: 177px;
+    }
+}

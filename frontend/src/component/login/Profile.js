@@ -1,88 +1,100 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../../context/auth";
-import {toast} from "react-toastify";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-const Profile = () => {
-  const navigate=useNavigate();
-  //context
-  const [auth, setAuth] = useAuth();
-  //state
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  
+import "./Profile.css";
+import LeaveButton from "./LeaveBtn";
 
+const MyComponent = () => {
+  const [data, setData] = useState([]);
+  const [ishistory, setIsHistory] = useState("true");
 
-//get user data
-useEffect(() => {
-  const {name,username,email} = auth?.user;
-  setName(name);
-  setUsername(username);
-  setEmail(email);
-}, [auth?.user]);
-  
-  // form function
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    navigate("/HomePage");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API}/api/v1/getGames`
+        );
+        setData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleHistory = () => {
+    setIsHistory(!ishistory);
   };
-  return (
-    <div title={"Your Profile"}>
-      <div className="container-fluid m-3 p-3">
-        <div className="row">
-          <div className="col-md-3">
-            
-          </div>
-          <div className="col-md-9">
-            <div className="form-container ">
-              <form onSubmit={handleSubmit}>
-                <h4 className="title">USER PROFILE</h4>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="form-control"
-                    id="exampleInputEmail1"
-                    placeholder="Enter Your Name"
-                    autoFocus disabled
-                  />
-                </div>
-                <div className="mb-3">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="form-control"
-                    id="exampleInputEmail1"
-                    placeholder="Enter Your Email "
-                    disabled
-                  />
-                </div>
-                
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="form-control"
-                    id="exampleInputEmail1"
-                     disabled
-                  />
-                </div>
 
-                <button type="submit" className="btn btn-primary">
-                  HOME
-                </button>
-              </form>
-            </div>
+  return (
+    <div className="profile-main-cont">
+      <button className="profile-btn" onClick={handleHistory}>
+        {ishistory ? "Player Profile" : "Player History"}
+      </button>
+
+      {ishistory ? (
+        <div className=" profile-body animated-div">
+          <div className="profile-card">
+            <h1 className="history-heading">Game History:</h1>
+            <ul className="history-cont">
+              {data.map((item, index) => (
+                <li key={index} className="history-card">
+                  <p>
+                    <strong>ROUND</strong>
+                  </p>
+                  <p>Date: {item.date}</p>
+                  <p>Participants: {item.no_participants}</p>
+                  <p>Rank: {item.rank}</p>
+                  <p>Score: {item.score}</p>
+                  <p>Guesses Made: {item.no_guesses_made}</p>
+                  <p>Rounds: {item.no_rounds}</p>
+                  {/* Add more fields as needed */}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
-      </div>
+      ) : (
+        <>
+          <div className="profile-body animated-div">
+            <div class="profile-card">
+              <div class="profile-photo-container">
+                <svg viewBox="0 0 220 220">
+                  <circle
+                    shape-rendering="geometricPrecision"
+                    class="indicator"
+                    cx="110"
+                    cy="110"
+                    r="96"
+                  />
+                </svg>
+                <div class="profile-img-box">
+                  <img
+                    className="profile-img"
+                    src="https://community.aseprite.org/uploads/default/original/2X/d/d139873489b95dbf0f22a9e75b403ce75393ca80.png"
+                    alt=""
+                  />
+                </div>
+              </div>
+              <h3 className="profile-h3">User Name</h3>
+              <span className="profile-span">beginner</span>
+              <div class="profile-box-container">
+                <div class="profile-box">
+                  <div>Total Game Played:25</div>
+                </div>
+                <div class="profile-box">
+                  <div>Total Win:17</div>
+                </div>
+              </div>
+              <div className="profile-leaveBtn">
+                <LeaveButton />
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
 
-export default Profile;
+export default MyComponent;

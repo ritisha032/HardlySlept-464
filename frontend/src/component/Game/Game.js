@@ -3,11 +3,14 @@ import ChatBox from './ChatBox';
 import Timer from './Timer';
 import SocketContext from '../../context/SocketContext';
 import GameContext from '../../context/GameContext';
+import Player from './Player'
+import GameResult from './GameResult.js'
 import DrawingCanvas from '../Game/DrawingCanvas.js'
 import Logout from '../login/Logout'
 import { useAuth } from '../../context/auth';
 import './Game.css'
-
+import RoundResult from "./RoundResult.js";
+var i=0;
 
 function Game() {
   const [secondsLeft,setSecondsLeft] = useState(30);
@@ -19,13 +22,15 @@ function Game() {
   const [hint,setHint] = useState("");
   const [auth,setAuth] = useAuth();
   const [phase,setPhase] = useState("");
-  const [score,setScore] = useState([]);
+  const [score,setScore] = useState(null);
+  const [displayScore,setDisplayScore] = useState(false);
 
    function sendChosenWord(word){
     socket.emit("word_chosen",{word:word});
     console.log(word);
     console.log("sendChosenWord");
     }
+  
     useEffect(()=>{
       if(score!=null){
         console.log(score);
@@ -37,7 +42,7 @@ function Game() {
     setHint(game.hint);
     setDrawer(game.drawer);
     setPhase(game.phase);
-
+    setScore(game.player_names);
     socket.on("timer_change",(data)=>{
       setSecondsLeft(data);
       console.log("time_change");
@@ -61,10 +66,13 @@ function Game() {
     })
     socket.on("score",(data)=>{
       setScore(data);
+      setDisplayScore(true);
+      setTimeout(()=>setDisplayScore(false),5000);
     })
   },[])
 
   return (
+    <div>
     <div className='game-cont'>
 
       <div className='game-header animated-div'>
@@ -80,14 +88,31 @@ function Game() {
           <div className='game-hint'>{hint}</div>
           <div className='game-logout'><Logout/></div>
       </div>
+
       <div className='game-component'>
-          <div className='game-leaderboard animated-div '>leaderboard</div>
-          <DrawingCanvas className='game-drawCanvas animated-div' true={(drawer==auth.user.username)}/>
-          <div className='animated-div'><ChatBox className='game-chat' true={(drawer!=auth.user.username)} /></div>
+          <div className='game-leaderboard animated-div'>
+            {(score!=null)? Object.keys(game.player_names).map((data,index)=>{
+            return <Player user={data} score={score[data]}/>
+            }):<></>}
+          </div>
+          <div className='game-drawCanvas animated-div'><DrawingCanvas/></div>
+          <div className='game-chat animated-div'><ChatBox/></div>
       </div>
       
     </div>
-    
+    {/* {
+     (displayScore==true)?<div className="game-result animated-div">
+      <h3 className="result-heading">Final Score</h3>
+      <GameResult score={score}/>
+    </div>:<></>
+    } */}
+    {
+      (displayScore==true)?<div className="round-result">
+      <h3 className='result-heading'>ScoreCard</h3>
+      <RoundResult score={score}/>
+      </div>:<></>
+   }
+    </div>
   );
 }
 

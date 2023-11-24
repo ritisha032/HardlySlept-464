@@ -17,7 +17,14 @@
 .lobby-cont {
     display: flex;
     flex-direction: column;
-    margin: 0px 100px 100px 100px;
+    height: 70%;
+    /* flex-wrap: wrap; */
+    /* margin: 0px 100px 100px 100px; */
+    position: absolute;
+    top: 2%;
+    left: 7%;
+    right: 7%;
+    /* bottom:4%; */
     gap: 10px;
 
     --input-focus: #2d8cf0;
@@ -31,9 +38,9 @@
 .lobby-header {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     background-color: var(--bg-color);
-    margin: 25px;
+    margin: 2%;
     height: 100px;
     /* background: lightgrey; */
     border: 2px solid var(--main-color);
@@ -41,21 +48,33 @@
 }
 
 .lobby-logout {
-    margin-left: 900px;
+    margin-right: 5%;
+}
+
+.lobby-heading {
+    margin-left: 5%;
 }
 
 .lobby-components {
     display: flex;
-    gap: 35px;
+    gap: 2%;
+    margin-left: 2%;
+    margin-right: 2%;
     justify-content: center;
     align-items: center;
 }
 
+/* .lobby-inner-components{
+    display:flex;
+    gap:2%;
+    justify-content: center;
+    align-items: center;
+} */
+
 .lobby {
     left: 25px;
-    width: 500px;
+    width: 400px;
     height: 500px;
-    margin-left: 25px;
     display: flex;
     flex-direction: column;
     /* justify-content: center; */
@@ -65,20 +84,33 @@
     box-shadow: 4px 4px var(--main-color);
 }
 
-.chat-cont {
-    /* width: 450px;
-    height: 500px;*/
-    margin-right: 25px;
-    border: 2px solid #323232;
-    box-shadow: 4px 4px #323232;
+.gamechat {
+    width: 450px;
+    height: 500px;
+    /* border: 2px solid #323232;
+    box-shadow: 4px 4px #323232; */
 }
 
-.gameForm {
+.gameForm-outer {
+    display: none;
+    height: 300px;
+    width: 100%;
+    background-color: #f8f8f8;
+    border: 2px solid var(--main-color);
+    box-shadow: 4px 4px var(--main-color);
+}
+
+.gameForm-inner {
+    height: 500px;
+    width: 500px;
+    background-color: #f8f8f8;
     border: 2px solid var(--main-color);
     box-shadow: 4px 4px var(--main-color);
 }
 
 .lobby-copy {
+    margin-left: 2%;
+    margin-right: 2%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -95,13 +127,13 @@
 
 .lobby-copy button[type="submit"] {
     background-color: #4e99e9;
-    margin-left: 450px;
+    /* margin-left: 70%; */
+    /* margin-left: 450px; */
     color: #fff;
     padding: 10px 20px;
     border-radius: 20px;
     /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
-    position: absolute;
-
+    /* position: absolute; */
     border: 2px solid var(--main-color);
     box-shadow: 4px 4px var(--main-color);
 }
@@ -114,4 +146,25 @@
 .lobby-copy button[type="submit"]:active {
     transform: translate(0.05em, 0.05em);
     box-shadow: 0.05em 0.05em;
+}
+
+
+@media only screen and (max-width: 800px) {
+    .lobby {
+        background-color: #2d8cf0;
+    }
+
+    /* .lobby-components{
+        display: flex;
+        flex-direction: column;
+    } */
+
+    .gameForm-inner {
+        display: none;
+    }
+
+    .gameForm-outer {
+        display: block;
+    }
+
 }
