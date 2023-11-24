@@ -1,8 +1,12 @@
 import React from 'react'
+import './Timer.css'
 
 function Timer(props) {
   return (
-    <div>Time = {props.time}</div>
+    <div>
+      <div></div>
+      <div className='time-count'>{props.time}</div>
+   </div>
   )
 }
 
