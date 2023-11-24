@@ -9,10 +9,10 @@ import LeaveButton from "./LeaveBtn";
 const MyComponent = () => {
   const [data, setData] = useState([]);
   const [formData, setFormData] = useState({
-    gender: "",
-    dateOfBirth: "",
-    contactNumber: "",
-    about: "",
+    gender: "female",
+    dateOfBirth: "2002-01-03",
+    contactNumber:123456789,
+    about: "abc",
   });
   const [ishistory, setIsHistory] = useState(true);
 
@@ -86,6 +86,25 @@ const MyComponent = () => {
   const handleHistory = () => {
     setIsHistory(!ishistory);
   };
+
+  const handleDelete= async() => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this account?");
+
+    if (confirmDelete) {
+      try {
+        const res = await axios.delete(`${process.env.REACT_APP_API}/api/v1/profile/deleteProfile`);
+        
+        if (res.data.success) {
+          toast.success(res.data.message);
+          navigate("/");
+        } else {
+          toast.warning(res.data.message);
+        }
+      } catch (error) {
+        toast.warning(error);
+      }
+    }
+    }
 
   return (
     <div className="profile-main-cont">
@@ -162,6 +181,8 @@ const MyComponent = () => {
             </div>
             <button type="submit">Update</button>
           </form>
+          <button type="submit" onClick={handleDelete}>Delete Account</button>
+
         </>
       )}
     </div>

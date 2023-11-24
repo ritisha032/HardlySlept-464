@@ -13,8 +13,8 @@ dotenv.config();
 export const signup = async (req, res) => {
   try {
     //fetch details from the request body
-    const { name, email, username, password, password1, otp } = req.body;
-    console.log(name,email,username,password,password1);
+    const { name, email, username, password, otp } = req.body;
+    console.log(name,email,username,password,otp);
 
     if (!name || !email || !username || !password || !otp ) {
       return res.status(403).json({
