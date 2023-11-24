@@ -420,15 +420,6 @@ const CanvasComponent = () => {
     // console.log(currentStep + " "+ history.length);
   };
 
-  const handleShapeChange = (e) => {
-    if(isEraser){
-      setShapeType("Pen");
-    }
-    else {
-      setShapeType(e.target.name);
-    }
-  };
-
   //-----------------ColorFill Function---------------------------
 
    const getColorAtPixel = (x, y) => {
@@ -538,16 +529,41 @@ const CanvasComponent = () => {
     }     
   };
 
-  //------------------------button press-------------------------------
+  //------------------------tool container buttons-------------------------------
+  const handleShapeChange = (e) => {
+    setIsFillColor(false);
+    setIsBrush(false);
+
+    if(isEraser){
+      setShapeType("Pen");
+    }
+    else {
+      setShapeType(e.target.name);
+      setIsShape(false);
+    }
+  };
 
   const PenButton=()=>{
+    setIsShape(false);
+    setIsEraser(false);
+    setIsFillColor(false);
     setIsBrush(!isBrush);
     setShapeType("Pen");
   }
 
   const EraserButton=()=>{
+    setIsShape(false);
+    setIsBrush(false);
+    setIsFillColor(false);
     setIsEraser(!isEraser)
     setShapeType("Pen");
+  }
+
+  const fillColorButton=()=>{
+    setIsShape(false);
+    setIsBrush(false);
+    setIsEraser(false);
+    setIsFillColor(!isFillColor);
   }
   
   // ------------------------download drawing----------------------------
@@ -585,7 +601,7 @@ const CanvasComponent = () => {
                  <img src={isEraser?closeIcon:eraserIcon} className='img' alt/>
               </div>
 
-              <div onClick={() => setIsFillColor(!isFillColor)}><img src={!isFillColor?colorFillIcon:closeIcon} className='img' alt/></div>
+              <div onClick={fillColorButton}><img src={!isFillColor?colorFillIcon:closeIcon} className='img' alt/></div>
               
               <div onClick={()=>setIsShape(!isShape)}>
                  <img src={shapesIcon} className='img' alt/>
@@ -595,7 +611,7 @@ const CanvasComponent = () => {
                 <div onClick={redo}><img src={redoIcon} className='img' alt/></div>
                 <div onClick={download}><img src={downloadIcon} className='img' alt/></div>
                 <div onClick={clearCanvas}><img src={clearIcon} className='img' alt/></div>
-                <div onClick={uploadImage}><img src={shareIcon} className='img'></img></div>
+                <div onClick={uploadImage}><img src={!isShare?shareIcon:closeIcon} className='img'></img></div>
             </div>
 
               {isShare?<div className='social-cont animated-div'>
