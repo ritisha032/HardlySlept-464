@@ -97,7 +97,7 @@ async function startGame(obj) {
   LabelIterator :for (var j = 0; j < obj.players.length; j++) {
       //setting timer of the round
       obj.gameData.CurrentTime = obj.gameData.TotalTime;
-      var t=15;
+      obj.gameData.waitTimeRemain = obj.gameData.waitTimeTotal;
       
       //if the player is not active, go to next player
       //getting username of the player
@@ -106,12 +106,12 @@ async function startGame(obj) {
       //setting drawer in the game object after checking if he/she is active
       obj.gameData.drawer=obj.players[j].user;
       console.log(obj.gameData.drawer)
-      var scoreData = {}; //keep track of score of players
+
       const DisconnectListener =  ()=>{
         console.log("disconnect inside game loop")
         emitPhaseChange("score");
         obj.gameData.CurrentTime=0;
-        t=0;
+        obj.gameData.waitTimeRemain=0;
       }
       const CanvasListener = (data) =>{
         obj.players[j].id.to(obj.gameData.roomNo).emit("receive_canvas_data",data);
@@ -138,9 +138,9 @@ async function startGame(obj) {
           //timeout of 15 seconds
           
           const intervalId = setInterval(()=>{
-            obj.players[j].id.emit("timer_change",t);
-            t--;
-            if(t<=0){
+            obj.players[j].id.emit("timer_change",obj.gameData.waitTimeRemain);
+            obj.gameData.waitTimeRemain--;
+            if(obj.gameData.waitTimeRemain<=0){
               clearTimeout(timeId); //clearing the above timeout
               clearInterval(intervalId);
               resolve();
@@ -218,9 +218,116 @@ async function startGame(obj) {
   console.log("game over");
   obj.gameData.status = "Finished";
   emitPhaseChange("finished");
-  //1-timer
-  //when timer runs out give the next player the turn
+  endGameEmit(obj.gameData.roomNo);
 }
+
+function endGameEmit(room){
+    //remove everyone from the room
+    // io.sockets.adapter.rooms[room].forEach(function(s){
+    //   s.leave(room);
+    // });
+    //remove the room from game array
+    game[room].players.map((data)=>{
+      data.id.emit("no_game","game ended");
+      data.id.leave(room);
+    })
+  
+    delete game[room];
+}
+
+function startGameSocket(gameObj,room,userSocket){
+  userSocket.on("start_game", () => {
+    if(gameObj.gameData.activePlayers==1)
+    userSocket.emit("no_game", { message: "Get more Players to start the game" });
+  else{
+      gameObj.gameData.status = "Running";
+      io.to(room).emit("game_data", gameObj.gameData);
+      try{
+        setTimeout(()=>{startGame(gameObj);},1000);
+      }
+      catch(e){
+        console.log(e);
+      }
+      console.log("started game");
+  }
+  //adding disconnect listener  
+});
+}
+
+function disconnectSocket(gameObj,room,user,userSocket){
+  userSocket.on("disconnect",()=>{
+    console.log("disconnect fired");
+    const index = gameObj.players.findIndex((ele)=>{return ele.user==user;});
+    gameObj.players[index].active = false;
+    gameObj.gameData.activePlayers--;
+    gameObj.gameData.player_names[user].active=false;
+    io.to(room).emit("game_data", gameObj.gameData);
+    console.log("end of custom disconnection");
+
+    if(gameObj.gameData.admin_name==user){
+      console.log("changing admin");
+      if(gameObj.gameData.status=="Lobby"){
+        //if there are at least one player
+        console.log("lobby admin change");
+        adminChange(gameObj,room,1);
+      }
+      else if(gameObj.gameData.status=="Running"){
+        adminChange(gameObj,room,2);
+      }
+    }
+   
+    
+  });
+}
+
+function adminChange(gameObj,room,minActivePlayer){
+  if(gameObj.gameData.activePlayers>=minActivePlayer){
+    //give the power to next player
+    console.log("admin change more than min active player")
+    const player_namesArray = Object.keys(gameObj.gameData.player_names);
+    const foundActive = player_namesArray.find((ele) => gameObj.gameData.player_names[ele].active == true);
+    const playersArray = gameObj.players;
+    const nextAdmin = playersArray.find((ele)=> ele.user==foundActive);
+    gameObj.admin.user = nextAdmin.user;
+    gameObj.admin.id = nextAdmin.id;
+    gameObj.gameData.admin_name = nextAdmin.user;
+    startGameSocket(gameObj,room,gameObj.admin.id);
+
+    io.to(room).emit("game_data",game[room].gameData);
+  }
+  else{
+    //game end and remove
+    console.log("admin change less than min active player")
+    gameObj.gameData.CurrentTime=0;
+    gameObj.gameData.TotalTime=0;
+    gameObj.gameData.waitTimeRemain=0;
+    gameObj.gameData.waitTimeTotal=0;
+
+}
+}
+function replaceWordsWithAsterisks(inputString) {
+  // Create a regular expression pattern with the words joined by '|'
+  const words
+   = ['fuck', 'dick', 'asshole','bitch','bastard','bloody']
+  const pattern = new RegExp(words.join('|'), 'gi');
+  
+  // Replace each match with asterisks of the same length
+  const resultString = inputString.replace(pattern, match => '*'.repeat(match.length));
+
+  if(resultString!=inputString)
+    	check=2
+	else
+    	check=0
+  return {
+  	updated:resultString,
+    check
+  }
+}
+
+// Example usage:
+
+
+
 
 io.on("connection", (socket) => {
   //creatin room public and private
@@ -240,6 +347,8 @@ io.on("connection", (socket) => {
         currentRound: 1,
         TotalTime: 30,
         CurrentTime: 30,
+        waitTimeTotal: 15,
+        waitTimeRemain : 15,
         drawer: null,
         roomNo: rm,
         hint: "",
@@ -250,32 +359,13 @@ io.on("connection", (socket) => {
       },
     };
 
-    game[rm].gameData.player_names[data.user] = { active: true, score: 0 ,roundScore:0};
+    game[rm].gameData.player_names[data.user] = { active: true, score: 0, roundScore:0, retrict_count:0, mute:false };
     socket.emit("game_data", game[rm].gameData); //emitting game data to move to lobby
     //adding listner to those sockets
-    socket.on("start_game", () => {
-        if(game[rm].players.length==1)
-        socket.emit("no_game", { message: "Get more Players to start the game" });
-      else{
-          game[rm].gameData.status = "Running";
-          io.to(rm).emit("game_data", game[rm].gameData);
-          setTimeout(()=>{startGame(game[rm]);},1000);
-          console.log("started game");
-      }
-      //socketDisconnect(socket,game[rm],data);
-     
-        
-    });
-    socket.on("disconnect",()=>{
-      console.log("disconnect fired");
-      const index = game[rm].players.findIndex((ele)=>{return ele.user==data.user;});
-      game[rm].players[index].active = false;
-      game[rm].gameData.player_names[data.user].active=false;
-      io.to(rm).emit("game_data", game[rm].gameData);
-      console.log("end of custom disconnection");
-    });
+    startGameSocket(game[rm],rm,socket); 
+    disconnectSocket(game[rm],rm,data.user,socket);
+    //console.log(game[rm]);
 
-    console.log(game[rm]);
   });
 
   //join a room
@@ -292,13 +382,16 @@ io.on("connection", (socket) => {
         const playerNameObject = game[data.room].gameData.player_names;
         const playerArray = game[data.room].players
         console.log(playerNameObject);
-        console.log(playerArray);
+        console.log(game[data.room]);
+        game[data.room].gameData.activePlayers++;
         if(playerNameObject[data.user]==undefined || playerNameObject[data.user].active==false) {
           socket.join(data.room);
           playerArray.push({
             user: data.user,
             id: socket,
-            active:true
+            active:true,
+            retrict_count:0,
+            mute:false 
           });
           if(data.user in playerNameObject){
             playerNameObject[data.user].active = true;
@@ -313,14 +406,8 @@ io.on("connection", (socket) => {
           console.log("adding the new player");
           console.log(playerNameObject);
           io.to(data.room).emit("game_data", game[data.room].gameData);
-
-          socket.on("disconnect",()=>{
-            console.log("disconnect fired");
-            const index = playerArray.findIndex((ele)=>{return ele.user==data.user;});
-            playerArray[index].active = false;
-            playerNameObject[data.user].active=false;
-            io.to(data.room).emit("game_data", game[data.room].gameData);
-          });
+          //attaching disconnect socket listener
+          disconnectSocket(game[data.room],data.room,data.user,socket);
         }
         else{
           //joining an already joined game
@@ -329,6 +416,7 @@ io.on("connection", (socket) => {
         
       } else {
         socket.emit("no_game", { message: "No room with this code" });
+        console.log("fired no_game no room with this code" + data.room)
       }
     }
  

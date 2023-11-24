@@ -31,9 +31,13 @@ const RoomHandler = () => {
       }
         
       if(socket!=null){
-        const roomurl = params.get("room")
-        roomurl?socket.emit("join_room",{type:"url",user:auth.user.username,room:roomurl}):
-        socket.on("no_game",(data)=>{ toast.warning(data.message);  })
+        const roomurl = params.get("room");
+        if(roomurl!=null){
+          socket.emit("join_room",{type:"url",user:auth.user.username,room:roomurl})
+          console.log("emitted join_room inside useEffect" + roomurl);
+        }
+        console.log("join in useEffect of socket" + roomurl);
+        socket.on("no_game",(data)=>{ toast.warning(data.message); })
         socket.on("game_data",(data)=>{ setGame(data);})
       }
     },[socket])
@@ -50,9 +54,9 @@ const RoomHandler = () => {
  async function createRoom(type){
         await socket.emit("create_room",{type:type,user:auth.user.username});
     };
-
     async function joinRoom(type){
       await socket.emit("join_room",{type:type,user:auth.user.username,room:room});
+      console.log("join room button");
       socket.on("room_created",(data) => {
           setGame(data) // runs use State
           console.log(data);
@@ -69,11 +73,11 @@ const RoomHandler = () => {
         <div className="room-cont">
 
             <button id="publicButton" className='btn'
-             onClick={()=>createRoom("public")}
+             onClick={()=>{createRoom("public")}}
             >Create Public Room</button>
 
             <button id="privateButton" className='btn'
-             onClick={()=>createRoom("private")}
+             onClick={()=>{createRoom("private")}}
             >Create Private Room</button>
 
             <div className='publicRoom-cont'>
@@ -81,12 +85,12 @@ const RoomHandler = () => {
                 value={room} onChange={handleChange} 
                 />
                 <button id="publicButton"className='btn'
-                onClick={()=>joinRoom("private")}
+                onClick={()=>{joinRoom("private")}}
                 >Join Private Room</button>
             </div>
             
             <button id="privateButton" className='btn'
-            onClick={()=>joinRoom("public")}
+            onClick={()=>{joinRoom("public")}}
             >Join Public Room</button>
 
             <Logout className='btn'/>
