@@ -8,17 +8,19 @@ import GameResult from './GameResult.js'
 import DrawingCanvas from '../Game/DrawingCanvas.js'
 import Logout from '../login/Logout'
 import { useAuth } from '../../context/auth';
+import { useNavigate } from 'react-router-dom';
 import './Game.css'
 import RoundResult from "./RoundResult.js";
 var i=0;
 
 function Game() {
   const [secondsLeft,setSecondsLeft] = useState(30);
+  const navigate=useNavigate();
   //const [buttonStatus,setButtonStatus] = useState("disabled");
   const [option,setOption] = useState([]);
   const [drawer,setDrawer] = useState("");
-  const {socket} = useContext(SocketContext);
-  const {game} = useContext(GameContext);
+  const {socket,setSocket} = useContext(SocketContext);
+  const {game,setGame} = useContext(GameContext);
   const [hint,setHint] = useState("");
   const [auth,setAuth] = useAuth();
   const [phase,setPhase] = useState("");
