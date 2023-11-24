@@ -2,11 +2,12 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 export const requireSignIn=async(req,res,next)=>{
     try{
-        const token = req.cookies.token 
-        || req.body.token 
-        || req.header("Authorisation").replace("Bearer ", "");
 
+        //extract token
+        const token = req.cookies.token || req.body.token || req.header("Authorization").replace("Bearer ", "");
+        console.log("token is",token);
 
+        //if token missing, then return response
         if(!token) {
             return res.status(401).json({
                 success:false,
@@ -28,11 +29,8 @@ export const requireSignIn=async(req,res,next)=>{
             });
         }
         next();
-    }
-    catch(error) {  
-        return res.status(401).json({
-            success:false,
-            message:'Something went wrong while validating the token',
-        });
+
+    }catch(error){
+        console.error(error);
     }
 }

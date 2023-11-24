@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import Game from "./Game.js";
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -34,7 +36,14 @@ const userSchema = new mongoose.Schema(
   },
   resetPasswordExpires: {
       type:Date,
-  }
+  },
+  gameHistory:[
+    {
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"Game",
+    }
+]
+
 
   },
   { timestamps: true }

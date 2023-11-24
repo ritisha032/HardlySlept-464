@@ -1,5 +1,5 @@
 import express from "express";
-import { signup,login, sendOTP} from "../controllers/authController.js";
+import { signup,login, sendOTP, changePassword, createGame, getGames} from "../controllers/authController.js";
 import { requireSignIn } from "../middleware/authMiddleware.js";
 import { resetPassword, resetPasswordToken } from "../controllers/resetPassword.js";
 const router=express.Router();
@@ -16,7 +16,7 @@ router.get("/user-auth",requireSignIn,(req,res)=>{
 router.post("/sendotp", sendOTP)
 
 // Route for Changing the password
-router.post("/changepassword", requireSignIn, )
+router.post("/changepassword", requireSignIn, changePassword)
 
 // ********************************************************************************************************
 //                                      Reset Password
@@ -27,5 +27,9 @@ router.post("/reset-password-token", resetPasswordToken)
 
 // Route for resetting user's password after verification
 router.post("/reset-password", resetPassword)
+
+router.post("/createGame",requireSignIn,createGame);
+
+router.get("/getGames",requireSignIn,getGames);
 
 export default router;

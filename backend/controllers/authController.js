@@ -5,8 +5,9 @@ import bcrypt from "bcrypt";
 import mailSender from "../utils/mailSender.js";
 import otpGenerator from "otp-generator";
 import Profile from "../models/Profile.js";
-import JWT from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import Game from "../models/Game.js";
 dotenv.config();
 
 export const signup = async (req, res) => {
@@ -115,7 +116,7 @@ export const login = async (req, res) => {
         })
         .status(400);
     }
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ email });
     if (!user) {
       return res
         .json({
@@ -140,12 +141,14 @@ export const login = async (req, res) => {
       id: user._id,
       email:user.email
     };
-    const token = JWT.sign(payload, process.env.JWT_SECRET, {
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
+    user = user.toObject();
+
     user.token = token;
-    user.password = undefined;
-    // Set cookie for token and return success response
+    user.password=undefined;
+
     const options = {
       expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
       httpOnly: true,
@@ -156,7 +159,7 @@ export const login = async (req, res) => {
       user,
       message: `User Login Success`,
     });
-} catch (err) {
+  } catch (err) {
     console.error(err);
 
     return res
@@ -299,3 +302,64 @@ export const changePassword = async (req, res) => {
 		});
 	}
 };
+
+export const createGame = async (req, res) => {
+  try {
+    const { date, no_participants, rank, score, no_guesses_made, no_rounds } =
+      req.body;
+    const userId = req.user.id;
+    console.log("user id= ", userId);
+    // console.log(req.user.id);
+    const game = await new Game({
+      date,
+      no_participants,
+      rank,
+      score,
+      no_guesses_made,
+      no_rounds,
+      userId
+    }).save();
+
+    const gameId=game.id;
+
+    console.log("game id= ",gameId);
+
+    const user=await User.findById(userId);
+
+    const udpatedUser = await User.findByIdAndUpdate(user, {$push: {gameHistory: gameId} }, {new :true})
+    .populate("gameHistory").exec();
+
+    return res.json({
+        updatedUser:udpatedUser,
+        message:"Game History stored successfully"
+    }).status(200);
+
+  } catch (err) {
+    console.error(err);
+
+    return res
+      .json({
+        success: false,
+        message: "user cannot be loggedin",
+      })
+      .status(500);
+  }
+};
+export const getGames=async(req,res)=>{
+    try
+    {
+            const userId=req.user.id;
+
+            console.log("user Id= ",userId);
+
+            const gameObjects=await User.findByIdAndUpdate(userId).populate("gameHistory");
+
+            res.json(gameObjects.gameHistory);
+
+            
+    }
+    catch(error)
+    {
+        console.error(error);
+    }
+}
