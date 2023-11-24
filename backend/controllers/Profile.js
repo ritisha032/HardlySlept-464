@@ -4,7 +4,8 @@ import {imageUploader} from "../utils/imageUploader.js";
 // Method for updating a profile
 export const updateProfile = async (req, res) => {
 	try {
-		const { dateOfBirth = "", about = "", contactNumber } = req.body;
+		const {gender,dateOfBirth,contactNumber,about} = req.body;
+		console.log(gender,dateOfBirth,about,contactNumber);
 		const id = req.user.id;
 
 		// Find the profile by id
@@ -12,6 +13,7 @@ export const updateProfile = async (req, res) => {
 		const profile = await Profile.findById(userDetails.additionalDetails);
 
 		// Update the profile fields
+		profile.gender=gender;
 		profile.dateOfBirth = dateOfBirth;
 		profile.about = about;
 		profile.contactNumber = contactNumber;
@@ -19,10 +21,12 @@ export const updateProfile = async (req, res) => {
 		// Save the updated profile
 		await profile.save();
 
+		const newUser=await User.findById(id).populate("additionalDetails");
+
 		return res.json({
 			success: true,
 			message: "Profile updated successfully",
-			profile,
+			details:newUser.additionalDetails,
 		});
 	} catch (error) {
 		console.log(error);

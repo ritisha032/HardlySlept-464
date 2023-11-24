@@ -365,3 +365,22 @@ export const getGames=async(req,res)=>{
         console.error(error);
     }
 }
+
+export const getUser=async(req,res)=>{
+  try{
+    const userId=req.user.id;
+
+    const user=await User.findById(userId).populate("additionalDetails");
+
+    console.log(user.additionalDetails);
+
+    return res.json({
+      additionalDetails:user.additionalDetails
+    }).status(200);
+
+  }
+  catch(error)
+  {
+    console.error(error);
+  }
+}
