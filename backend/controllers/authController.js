@@ -82,8 +82,7 @@ export const signup = async (req, res) => {
       email,
       username,
       password: hashedPassword,
-      image: `https://api.dicebear.com/5.x/initials/svg?seed=${name}`,
-
+      image:`https://api.multiavatar.com/${name}`,
       additionalDetails: profileDetails._id,
     }).save();
 

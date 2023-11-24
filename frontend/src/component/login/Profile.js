@@ -11,9 +11,9 @@ const MyComponent = () => {
   const [formData, setFormData] = useState({
     gender: "female",
     dateOfBirth: "2002-01-03",
-    contactNumber:123456789,
+    contactNumber: 123456789,
     about: "abc",
-    image:""
+    image:"",
   });
   const [ishistory, setIsHistory] = useState(true);
 
@@ -53,15 +53,15 @@ const MyComponent = () => {
           `${process.env.REACT_APP_API}/api/v1/get-user`
         );
 
-        //console.log("retrieved user= ",response.data.additionalDetails.contactNumber);
+        console.log("retrieved user= ",response.data.image);
         setFormData({
           gender: response.data.additionalDetails.gender,
           dateOfBirth: response.data.additionalDetails.dateOfBirth,
           contactNumber: response.data.additionalDetails.contactNumber,
           about: response.data.additionalDetails.about,
-          image:response.data.image
-        
+          image: response.data.image,
         });
+        console.log("formData= ",formData.image);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -90,13 +90,17 @@ const MyComponent = () => {
     setIsHistory(!ishistory);
   };
 
-  const handleDelete= async() => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this account?");
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this account?"
+    );
 
     if (confirmDelete) {
       try {
-        const res = await axios.delete(`${process.env.REACT_APP_API}/api/v1/profile/deleteProfile`);
-        
+        const res = await axios.delete(
+          `${process.env.REACT_APP_API}/api/v1/profile/deleteProfile`
+        );
+
         if (res.data.success) {
           toast.success(res.data.message);
           navigate("/");
@@ -107,7 +111,7 @@ const MyComponent = () => {
         toast.warning(error);
       }
     }
-    }
+  };
 
   return (
     <div className="profile-main-cont">
@@ -183,18 +187,13 @@ const MyComponent = () => {
               />
             </div>
             <label htmlFor="image">Image:</label>
-            <img
-                  src={formData.image}
-                  alt="Profile"
-                  style={{ maxWidth: "200px", maxHeight: "200px" }}
-                />
-              
-            
+            <img src={formData.image} alt="Profile" />
 
             <button type="submit">Update</button>
           </form>
-          <button type="submit" onClick={handleDelete}>Delete Account</button>
-
+          <button type="submit" onClick={handleDelete}>
+            Delete Account
+          </button>
         </>
       )}
     </div>
