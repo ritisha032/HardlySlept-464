@@ -1,88 +1,40 @@
-import React, { useState, useEffect } from "react";
-import { useAuth } from "../../context/auth";
-import {toast} from "react-toastify";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-const Profile = () => {
-  const navigate=useNavigate();
-  //context
-  const [auth, setAuth] = useAuth();
-  //state
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
+const MyComponent = () => {
+  const [data, setData] = useState([]);
 
-//get user data
-useEffect(() => {
-  const {name,username,email} = auth?.user;
-  setName(name);
-  setUsername(username);
-  setEmail(email);
-}, [auth?.user]);
-  
-  // form function
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    navigate("/HomePage");
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API}/api/v1/getGames`);
+        setData(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
-    <div title={"Your Profile"}>
-      <div className="container-fluid m-3 p-3">
-        <div className="row">
-          <div className="col-md-3">
-            
-          </div>
-          <div className="col-md-9">
-            <div className="form-container ">
-              <form onSubmit={handleSubmit}>
-                <h4 className="title">USER PROFILE</h4>
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="form-control"
-                    id="exampleInputEmail1"
-                    placeholder="Enter Your Name"
-                    autoFocus disabled
-                  />
-                </div>
-                <div className="mb-3">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="form-control"
-                    id="exampleInputEmail1"
-                    placeholder="Enter Your Email "
-                    disabled
-                  />
-                </div>
-                
-                <div className="mb-3">
-                  <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="form-control"
-                    id="exampleInputEmail1"
-                     disabled
-                  />
-                </div>
-
-                <button type="submit" className="btn btn-primary">
-                  HOME
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div>
+      <h1>Game History:</h1>
+      <ul>
+        {data.map((item, index) => (
+          <li key={index}>
+            <p>Date: {item.date}</p>
+            <p>Participants: {item.no_participants}</p>
+            <p>Rank: {item.rank}</p>
+            <p>Score: {item.score}</p>
+            <p>Guesses Made: {item.no_guesses_made}</p>
+            <p>Rounds: {item.no_rounds}</p>
+            {/* Add more fields as needed */}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
 
-export default Profile;
+export default MyComponent;

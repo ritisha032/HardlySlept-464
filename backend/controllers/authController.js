@@ -142,7 +142,7 @@ export const login = async (req, res) => {
       email:user.email
     };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "1d",
+      expiresIn: "24h",
     });
     user = user.toObject();
 
