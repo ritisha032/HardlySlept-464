@@ -17,6 +17,9 @@ function Message(props) {
         else
         message = "guessed the word correctly"
     }
+    if(check==2){
+      color="red";
+    }
   return (
     <div class="dropdown" >
       <button class="dropbtn" style={{backgroundColor:`${color}`}}>{props.user}:-{message}</button>

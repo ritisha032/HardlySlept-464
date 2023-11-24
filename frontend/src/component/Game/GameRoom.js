@@ -5,20 +5,23 @@ import Lobby from './Lobby'
 import { useNavigate } from 'react-router-dom';
 import SocketContext from '../../context/SocketContext'
 import { useAuth} from "../../context/auth";
-
+import { toast } from "react-toastify";
 function GameRoom() {
     const {game,setGame} = useContext(GameContext);
-    const {socket} = useContext(SocketContext);
+    const {socket,setSocket} = useContext(SocketContext);
     const [auth,setAuth]=useAuth('');
     const navigate=useNavigate();
     const out = new URLSearchParams(window.location.search);
     console.log(out.get("room"))
     useEffect(()=>{
       if(socket!=null){
-      
       socket.emit("join_room",{user:auth.user.username});
-      socket.on("leave_room",(data)=>{
-        navigate(`/HomePage`);
+      socket.on("kicked",()=>{
+        setGame(null);
+        socket.disconnect();
+        console.log("kicked");
+        toast.warning("you got kicked out of the game");
+        navigate('/HomePage');
       })
       socket.on("join_room",(data)=>{
         setGame(data);

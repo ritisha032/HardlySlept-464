@@ -326,10 +326,9 @@ function adminChange(gameObj,room,minActivePlayer){
 }
 function replaceWordsWithAsterisks(inputString) {
   // Create a regular expression pattern with the words joined by '|'
-  const words
-   = ['fuck', 'dick', 'asshole','bitch','bastard','bloody']
+  const words = ['fuck', 'dick', 'asshole','bitch','bastard','bloody']
   const pattern = new RegExp(words.join('|'), 'gi');
-  
+   var check;
   // Replace each match with asterisks of the same length
   const resultString = inputString.replace(pattern, match => '*'.repeat(match.length));
 
@@ -378,7 +377,7 @@ io.on("connection", (socket) => {
       },
     };
 
-    game[rm].gameData.player_names[data.user] = { active: true, score: 0, roundScore:0, retrict_count:0, mute:false };
+    game[rm].gameData.player_names[data.user] = { active: true, score: 0, roundScore:0, restrict_count:0, mute:false };
     socket.emit("game_data", game[rm].gameData); //emitting game data to move to lobby
     //adding listner to those sockets
     startGameSocket(game[rm],rm,socket); 
@@ -409,7 +408,7 @@ io.on("connection", (socket) => {
             user: data.user,
             id: socket,
             active:true,
-            retrict_count:0,
+            restrict_count:0,
             mute:false 
           });
           if(data.user in playerNameObject){
@@ -452,12 +451,32 @@ io.on("connection", (socket) => {
         })
     ) {
       console.log(data.message + "==" + game[data.room].word);
-      if (data.message.toLowerCase() === game[data.room].word.toLowerCase())
+      if (data.message.toLowerCase() === game[data.room].word.toLowerCase()){
         check = 1;
-      game[data.room].gameData.player_names[data.user].roundScore = Math.max(calculateScore(game[data.room].gameData.TotalTime,game[data.room].gameData.CurrentTime),game[data.room].gameData.player_names[data.user].roundScore);
-      socket.to(data.room).emit("receive_message", { ...data, check });
-      socket.emit("receive_message", { ...data, check });
-      console.log(check);
+        game[data.room].gameData.player_names[data.user].roundScore = Math.max(calculateScore(game[data.room].gameData.TotalTime,game[data.room].gameData.CurrentTime),game[data.room].gameData.player_names[data.user].roundScore);  
+      }
+      if(replaceWordsWithAsterisks(data.message).check==2){
+        check=2;
+        game[data.room].gameData.player_names[data.user].restrict_count++;
+        if(game[data.room].gameData.player_names[data.user].restrict_count>3){
+          //kick the user;
+          socket.emit("kicked");
+          console.log("hum hain kicked hone waale");
+        }
+        else{
+          var warning = "Don't Abuse, You'll get restricted"
+          var safeMessage = replaceWordsWithAsterisks(data.message).updated;
+          socket.emit("receive_message",{message:warning,room:data.room,user:"game police",check:2});
+          socket.emit("receive_message",{message:safeMessage,room:data.room,user:"game police",check:2});
+        }
+      }
+      else{
+        socket.to(data.room).emit("receive_message", { ...data, check });
+        socket.emit("receive_message", { ...data, check });
+        console.log(check);
+
+      }
+      
     } else {
       socket.emit("feedback", "Not a Member, please join");
     }

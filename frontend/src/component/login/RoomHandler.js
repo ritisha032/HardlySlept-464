@@ -9,7 +9,7 @@ import SocketContext from '../../context/SocketContext';
 import './RoomHandler.css'
 import Logout from './Logout';
 import GameRoom from '../Game/GameRoom'
-const socketTemp = io.connect('http://localhost:3001');
+
 
 const RoomHandler = () => {
     
@@ -18,30 +18,49 @@ const RoomHandler = () => {
     const {game,setGame} = useContext(GameContext);
     const [auth,setAuth]=useAuth('');
     const [room,setRoom] = useState("");
+    const [createRoom,setCreateRoom] = useState(null);
+    const [joinRoom,setJoinRoom] = useState(null);
     const handleChange=(e)=>{
         setRoom(e.target.value);
     };
     const params = new URLSearchParams(window.location.search);
+    var roomurl;
 
     useEffect(()=>{
-      if(socket==null){
-        setSocket(socketTemp);
-        console.log(socketTemp);
-        console.log("sokcet is null");
-      }
-        
       if(socket!=null){
-        const roomurl = params.get("room");
-        if(roomurl!=null){
-          socket.emit("join_room",{type:"url",user:auth.user.username,room:roomurl})
-          console.log("emitted join_room inside useEffect" + roomurl);
-        }
-        console.log("join in useEffect of socket" + roomurl);
         socket.on("no_game",(data)=>{ toast.warning(data.message); })
         socket.on("game_data",(data)=>{ setGame(data);})
       }
+
     },[socket])
 
+    useEffect(()=>{
+      console.log("change in socket observed");
+      if(socket==null && params.get("room")!=undefined && params.get("room")!=null){
+        roomurl = params.get("room");
+        const socketTemp = io.connect('http://localhost:3001') ;
+        setSocket(socketTemp);
+      }
+      if(socket!=null && params.get("room")!=undefined && params.get("room")!=null){
+        socket.emit("join_room",{type:"url",user:auth.user.username,room:roomurl})
+        console.log("emitted join_room inside useEffect" + roomurl);
+        console.log("join in useEffect of socket" + roomurl);
+
+      }  
+    },[socket])
+
+    useEffect(()=>{
+      console.log("changing setCreateRoom")
+      if(socket!=null && setCreateRoom!=null){
+        socket.emit("create_room",createRoom);
+      }
+    },[createRoom]);
+
+    useEffect(()=>{
+      if(socket!=null){
+        socket.emit("join_room",joinRoom);
+      }
+    },[joinRoom])
 
     useEffect(()=>{
       if(game!=null){
@@ -51,16 +70,20 @@ const RoomHandler = () => {
       
     },[game])
 
- async function createRoom(type){
-        await socket.emit("create_room",{type:type,user:auth.user.username});
+ function createRoomFun(type){
+          console.log("createRoom button")
+          const socketTemp = io.connect('http://localhost:3001') ;
+          setSocket(socketTemp);
+          const data={type:type,user:auth.user.username};
+          setCreateRoom(data);
+        
     };
-    async function joinRoom(type){
-      await socket.emit("join_room",{type:type,user:auth.user.username,room:room});
-      console.log("join room button");
-      socket.on("room_created",(data) => {
-          setGame(data) // runs use State
-          console.log(data);
-      })
+  function joinRoomFun(type){
+        const socketTemp = io.connect('http://localhost:3001') ;
+        setSocket(socketTemp);
+        setJoinRoom(...{type:type,user:auth.user.username,room:room});
+        console.log("join room button");
+     
     }
     
 
@@ -68,16 +91,14 @@ const RoomHandler = () => {
     <div>
         {
           (game==null)?
-          (socket==null)?
-            <div>Loading</div>:
         <div className="room-cont">
 
             <button id="publicButton" className='btn'
-             onClick={()=>{createRoom("public")}}
+             onClick={()=>{createRoomFun("public")}}
             >Create Public Room</button>
 
             <button id="privateButton" className='btn'
-             onClick={()=>{createRoom("private")}}
+             onClick={()=>{createRoomFun("private")}}
             >Create Private Room</button>
 
             <div className='publicRoom-cont'>
@@ -85,12 +106,12 @@ const RoomHandler = () => {
                 value={room} onChange={handleChange} 
                 />
                 <button id="publicButton"className='btn'
-                onClick={()=>{joinRoom("private")}}
+                onClick={()=>{joinRoomFun("private")}}
                 >Join Private Room</button>
             </div>
             
             <button id="privateButton" className='btn'
-            onClick={()=>{joinRoom("public")}}
+            onClick={()=>{joinRoomFun("public")}}
             >Join Public Room</button>
 
             <Logout className='btn'/>
