@@ -22,7 +22,7 @@
     left: 7%;
     right: 7%;
     /* bottom:4%; */
-    gap: 6px;
+    gap: 4px;
     --input-focus: #2d8cf0;
     --font-color: #323232;
     --font-color-sub: #666;
@@ -44,11 +44,20 @@
     box-shadow: 4px 4px var(--main-color);
 }
 
+.game-time {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
 .game-timer {
     margin-left: 2%;
 }
 
 .game-logout {
+    display: flex;
+    gap: 7px;
     margin-right: 2%;
 }
 
@@ -123,6 +132,11 @@
     height: 10px;
     justify-content: center;
     align-items: center;
+}
+
+.gameImg-timer {
+    width: 50px;
+    height: 50px;
 }
 
 @media only screen and (max-width: 950px) {}

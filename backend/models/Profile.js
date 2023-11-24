@@ -3,9 +3,11 @@ import mongoose from "mongoose";
 const profileSchema = new mongoose.Schema(
     {
     
-    gender: {
-        type:String,
-    },
+        gender: {
+            type: String,
+            enum: ['male', 'female'],
+            
+          },
     dateOfBirth: {
         type:String,
     },

@@ -13,8 +13,8 @@ dotenv.config();
 export const signup = async (req, res) => {
   try {
     //fetch details from the request body
-    const { name, email, username, password, password1, otp } = req.body;
-    console.log(name,email,username,password,password1);
+    const { name, email, username, password, otp } = req.body;
+    console.log(name,email,username,password,otp);
 
     if (!name || !email || !username || !password || !otp ) {
       return res.status(403).json({
@@ -82,8 +82,7 @@ export const signup = async (req, res) => {
       email,
       username,
       password: hashedPassword,
-      image: `https://api.dicebear.com/5.x/initials/svg?seed=${name}`,
-
+      image:`https://api.multiavatar.com/${name}`,
       additionalDetails: profileDetails._id,
     }).save();
 
@@ -364,4 +363,24 @@ export const getGames=async(req,res)=>{
     {
         console.error(error);
     }
+}
+
+export const getUser=async(req,res)=>{
+  try{
+    const userId=req.user.id;
+
+    const user=await User.findById(userId).populate("additionalDetails");
+
+    console.log(user);
+
+    return res.json({
+      additionalDetails:user.additionalDetails,
+      image:user.image
+    }).status(200);
+
+  }
+  catch(error)
+  {
+    console.error(error);
+  }
 }

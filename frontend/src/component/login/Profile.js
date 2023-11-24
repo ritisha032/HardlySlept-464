@@ -1,12 +1,76 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Logout from "./Logout";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import "./Profile.css";
 import LeaveButton from "./LeaveBtn";
 
 const MyComponent = () => {
   const [data, setData] = useState([]);
-  const [ishistory, setIsHistory] = useState("true");
+  const [formData, setFormData] = useState({
+    gender: "female",
+    dateOfBirth: "2002-01-03",
+    contactNumber: 123456789,
+    about: "abc",
+    image:"",
+  });
+  const [ishistory, setIsHistory] = useState(true);
 
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    //  console.log("formData= ", formData);
+
+    if (formData.contactNumber.length > 10)
+      toast.warning("Invalid phone number");
+    else {
+      const res = await axios
+        .put(
+          `${process.env.REACT_APP_API}/api/v1/profile/updateProfile`,
+          formData
+        )
+        .then((response) => {
+          console.log("Profile updated successfully:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error updating profile:", error);
+        });
+    }
+  };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API}/api/v1/get-user`
+        );
+
+        console.log("retrieved user= ",response.data.image);
+        setFormData({
+          gender: response.data.additionalDetails.gender,
+          dateOfBirth: response.data.additionalDetails.dateOfBirth,
+          contactNumber: response.data.additionalDetails.contactNumber,
+          about: response.data.additionalDetails.about,
+          image: response.data.image,
+        });
+        console.log("formData= ",formData.image);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -24,6 +88,29 @@ const MyComponent = () => {
 
   const handleHistory = () => {
     setIsHistory(!ishistory);
+  };
+
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this account?"
+    );
+
+    if (confirmDelete) {
+      try {
+        const res = await axios.delete(
+          `${process.env.REACT_APP_API}/api/v1/profile/deleteProfile`
+        );
+
+        if (res.data.success) {
+          toast.success(res.data.message);
+          navigate("/");
+        } else {
+          toast.warning(res.data.message);
+        }
+      } catch (error) {
+        toast.warning(error);
+      }
+    }
   };
 
   return (
@@ -56,41 +143,57 @@ const MyComponent = () => {
         </div>
       ) : (
         <>
-          <div className="profile-body animated-div">
-            <div class="profile-card">
-              <div class="profile-photo-container">
-                <svg viewBox="0 0 220 220">
-                  <circle
-                    shape-rendering="geometricPrecision"
-                    class="indicator"
-                    cx="110"
-                    cy="110"
-                    r="96"
-                  />
-                </svg>
-                <div class="profile-img-box">
-                  <img
-                    className="profile-img"
-                    src="https://community.aseprite.org/uploads/default/original/2X/d/d139873489b95dbf0f22a9e75b403ce75393ca80.png"
-                    alt=""
-                  />
-                </div>
-              </div>
-              <h3 className="profile-h3">User Name</h3>
-              <span className="profile-span">beginner</span>
-              <div class="profile-box-container">
-                <div class="profile-box">
-                  <div>Total Game Played:25</div>
-                </div>
-                <div class="profile-box">
-                  <div>Total Win:17</div>
-                </div>
-              </div>
-              <div className="profile-leaveBtn">
-                <LeaveButton />
-              </div>
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="gender">Gender:</label>
+              <select
+                id="gender"
+                name="gender"
+                onChange={handleChange}
+                value={formData.gender}
+              >
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
             </div>
-          </div>
+            <div>
+              <label htmlFor="dateOfBirth">Date of Birth:</label>
+              <input
+                type="date"
+                id="dateOfBirth"
+                name="dateOfBirth"
+                onChange={handleChange}
+                value={formData.dateOfBirth}
+              />
+            </div>
+            <div>
+              <label htmlFor="contactNumber">Phone Number:</label>
+              <input
+                type="number"
+                id="contactNumber"
+                name="contactNumber"
+                pattern="[0-9]{10}"
+                onChange={handleChange}
+                value={formData.contactNumber}
+              />
+            </div>
+            <div>
+              <label htmlFor="about">About:</label>
+              <textarea
+                id="about"
+                name="about"
+                onChange={handleChange}
+                value={formData.about}
+              />
+            </div>
+            <label htmlFor="image">Image:</label>
+            <img src={formData.image} alt="Profile" />
+
+            <button type="submit">Update</button>
+          </form>
+          <button type="submit" onClick={handleDelete}>
+            Delete Account
+          </button>
         </>
       )}
     </div>

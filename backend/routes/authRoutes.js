@@ -1,5 +1,5 @@
 import express from "express";
-import { signup,login, sendOTP, changePassword, createGame, getGames} from "../controllers/authController.js";
+import { signup,login, sendOTP, changePassword, createGame, getGames, getUser} from "../controllers/authController.js";
 import { requireSignIn } from "../middleware/authMiddleware.js";
 import { resetPassword, resetPasswordToken } from "../controllers/resetPassword.js";
 const router=express.Router();
@@ -31,5 +31,7 @@ router.post("/reset-password", resetPassword)
 router.post("/createGame",requireSignIn,createGame);
 
 router.get("/getGames",requireSignIn,getGames);
+
+router.get("/get-user",requireSignIn,getUser);
 
 export default router;

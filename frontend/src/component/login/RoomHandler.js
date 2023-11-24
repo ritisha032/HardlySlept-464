@@ -1,15 +1,15 @@
-import React from 'react';
-import {useEffect, useState,useContext} from 'react';
-import { useNavigate } from 'react-router-dom';
-import {io} from 'socket.io-client';
-import GameContext from '../../context/GameContext';
-import { useAuth} from "../../context/auth";
+import React from "react";
+import { useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
+import GameContext from "../../context/GameContext";
+import { useAuth } from "../../context/auth";
 import { toast } from "react-toastify";
-import SocketContext from '../../context/SocketContext';
-import './RoomHandler.css'
-import Logout from './Logout';
-import GameRoom from '../Game/GameRoom'
-
+import SocketContext from "../../context/SocketContext";
+import "./RoomHandler.css";
+import Logout from "./Logout";
+import GameRoom from "../Game/GameRoom";
+const socketTemp = io.connect("http://localhost:3001");
 
 const RoomHandler = () => {
     
@@ -88,41 +88,41 @@ const RoomHandler = () => {
     }
     
 
-  return (
-    <div>
-        {
-          (game==null)?
-        <div className="room-cont">
-
-            <button id="publicButton" className='btn'
-             onClick={()=>{createRoomFun("public")}}
-            >Create Public Room</button>
-
-            <button id="privateButton" className='btn'
-             onClick={()=>{createRoomFun("private")}}
-            >Create Private Room</button>
-
-            <div className='publicRoom-cont'>
-                <input placeholder="Enter Room Code" className='msg-field' 
-                value={room} onChange={handleChange} 
-                />
-                <button id="publicButton"className='btn'
-                onClick={()=>{joinRoomFun("private")}}
-                >Join Private Room</button>
-            </div>
-            
-            <button id="privateButton" className='btn'
-            onClick={()=>{joinRoomFun("public")}}
-            >Join Public Room</button>
-
-            <Logout className='btn'/>
-
-            <button id="profile" onClick={(() => navigate('/profile'))}>Profile</button>
-
-        </div>:<GameRoom/>
-        }
-    </div>
-  )
-}
-
-export default RoomHandler
+    return (
+      <div>
+          {
+            (game==null)?
+          <div className="room-cont">
+  
+              <button id="publicButton" className='btn'
+               onClick={()=>{createRoomFun("public")}}
+              >Create Public Room</button>
+  
+              <button id="privateButton" className='btn'
+               onClick={()=>{createRoomFun("private")}}
+              >Create Private Room</button>
+  
+              <div className='publicRoom-cont'>
+                  <input placeholder="Enter Room Code" className='msg-field' 
+                  value={room} onChange={handleChange} 
+                  />
+                  <button id="publicButton"className='btn'
+                  onClick={()=>{joinRoomFun("private")}}
+                  >Join Private Room</button>
+              </div>
+              
+              <button id="privateButton" className='btn'
+              onClick={()=>{joinRoomFun("public")}}
+              >Join Public Room</button>
+  
+              <Logout className='btn'/>
+  
+              <button id="profile" onClick={(() => navigate('/profile'))}>Profile</button>
+  
+          </div>:<GameRoom/>
+          }
+      </div>
+    )
+  }
+  
+  export default RoomHandler

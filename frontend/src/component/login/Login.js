@@ -22,7 +22,19 @@ function Login(){
     const [isSubmit, setIsSubmit] = useState(false);
     const navigate=useNavigate();
     
+    const handleReset=async(e) => {
+        e.preventDefault();
 
+        if(!email)
+        {
+            toast.warning("Enter your email");
+        }
+        const res=await axios.post(`${process.env.REACT_APP_API}/api/v1/reset-password-token`,{email});
+
+        console.log(res.data.success);
+
+
+    }
     const handleSubmit = async (e) => {
         console.log(formErrors.email);
         console.log(formErrors.password);
@@ -120,6 +132,8 @@ function Login(){
             {formErrors.password!=undefined?<p>{formErrors.password}</p>:null}
 
             <button class="flip-card__btn" onClick={handleSubmit}>Let`s go!</button>
+
+           
         </form>
     </div>
     )
