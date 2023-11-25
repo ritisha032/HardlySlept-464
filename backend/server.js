@@ -90,6 +90,7 @@ async function startGame(obj) {
     //seding information to everyone that choosing is taking place
     obj.players[j].id.to(obj.gameData.roomNo).emit("drawer_change",{drawer:obj.gameData.drawer});
     obj.players[j].id.emit("drawer_change",{drawer:obj.gameData.drawer,options:options});
+    io.to(obj.gameData.roomNo).emit("game_data",obj.gameData);
   }
 
   function addThreeWords(options){
@@ -134,7 +135,6 @@ async function startGame(obj) {
       }
       const CanvasListener = (data) =>{
         obj.players[j].id.to(obj.gameData.roomNo).emit("receive_canvas_data",data);
-        console.log("inside listener for canvas");
       }
       obj.players[j].id.on("send_canvas_data",CanvasListener);
       //attaching listener to see if the drawer leaves 
@@ -318,6 +318,7 @@ function adminChange(gameObj,room,minActivePlayer){
     const foundActive = player_namesArray.find((ele) => gameObj.gameData.player_names[ele].active == true);
     const playersArray = gameObj.players;
     const nextAdmin = playersArray.find((ele)=> ele.user==foundActive);
+    console.log(nextAdmin);
     gameObj.admin.user = nextAdmin.user;
     gameObj.admin.id = nextAdmin.id;
     gameObj.gameData.admin_name = nextAdmin.user;
