@@ -13,9 +13,9 @@ const MyComponent = () => {
     dateOfBirth: "2002-01-03",
     contactNumber: 123456789,
     about: "abc",
-    image:"",
+    image: "",
   });
-  const [ishistory, setIsHistory] = useState(true);
+  const [ishistory, setIsHistory] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -53,7 +53,7 @@ const MyComponent = () => {
           `${process.env.REACT_APP_API}/api/v1/get-user`
         );
 
-        console.log("retrieved user= ",response.data.image);
+        console.log("retrieved user= ", response.data.image);
         setFormData({
           gender: response.data.additionalDetails.gender,
           dateOfBirth: response.data.additionalDetails.dateOfBirth,
@@ -61,7 +61,7 @@ const MyComponent = () => {
           about: response.data.additionalDetails.about,
           image: response.data.image,
         });
-        console.log("formData= ",formData.image);
+        console.log("formData= ", formData.image);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -143,6 +143,41 @@ const MyComponent = () => {
         </div>
       ) : (
         <>
+          <div className="profile-body animated-div">
+            <div class="profile-card">
+              <div class="profile-photo-container">
+                <svg viewBox="0 0 220 220">
+                  <circle
+                    shape-rendering="geometricPrecision"
+                    class="indicator"
+                    cx="110"
+                    cy="110"
+                    r="96"
+                  />
+                </svg>
+                <div class="profile-img-box">
+                  <img
+                    className="profile-img"
+                    src="https://community.aseprite.org/uploads/default/original/2X/d/d139873489b95dbf0f22a9e75b403ce75393ca80.png"
+                    alt=""
+                  />
+                </div>
+              </div>
+              <h3 className="profile-h3">User Name</h3>
+              <span className="profile-span">beginner</span>
+              <div class="profile-box-container">
+                <div class="profile-box">
+                  <div>Total Game Played:25</div>
+                </div>
+                <div class="profile-box">
+                  <div>Total Win:17</div>
+                </div>
+              </div>
+              <div className="profile-leaveBtn">
+                <button>Leave</button>
+              </div>
+            </div>
+          </div>
           <form onSubmit={handleSubmit}>
             <div>
               <label htmlFor="gender">Gender:</label>

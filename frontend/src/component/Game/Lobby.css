@@ -117,13 +117,14 @@
     margin-left: 2%;
     margin-right: 2%;
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
     gap: 10px;
 }
 
 .lobby-copy input[type="text"] {
-    display: none;
+    /* display: none; */
+    opacity: 0;
 }
 
 .lobby-copy-btn {
