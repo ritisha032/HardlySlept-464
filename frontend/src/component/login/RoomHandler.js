@@ -9,7 +9,6 @@ import SocketContext from "../../context/SocketContext";
 import "./RoomHandler.css";
 import Logout from "./Logout";
 import GameRoom from "../Game/GameRoom";
-const socketTemp = io.connect("http://localhost:3001");
 
 const RoomHandler = () => {
     
@@ -36,6 +35,7 @@ const RoomHandler = () => {
 
     useEffect(()=>{
       console.log("change in socket observed");
+      console.log(params.get("room"))
       if(socket==null && params.get("room")!=undefined && params.get("room")!=null){
         roomurl = params.get("room");
         const socketTemp = io.connect('http://localhost:3001') ;

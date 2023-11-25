@@ -14,7 +14,7 @@ import "./Lobby.css";
 const Lobby = () => {
   const { game } = useContext(GameContext);
   const { socket } = useContext(SocketContext);
-  const { user } = useContext(UserContext);
+
   console.log(game);
   const startGame = () => {
     socket.emit("start_game", { room: game.roomNo });
@@ -86,8 +86,8 @@ const Lobby = () => {
       </div>
 
       <div class="lobby-copy animated-div">
-        <input value={"RoomCode"} ref={inputCode} type="text" />
-        <input value={"RoomLink"} ref={inputLink} type="text" />
+        <input value={(new URLSearchParams(window.location.search)).get("room")} ref={inputCode} type="text" />
+        <input value={window.location.href} ref={inputLink} type="text" />
 
         <button className="lobby-copy-btn" type="submit" onClick={copyCode}>
           Copy Room Code
