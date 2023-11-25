@@ -52,22 +52,108 @@ const io = new Server(server, {
 });
 
 var guessWord = [
-  "dog",
-  "cat",
-  "mouse",
-  "cow",
-  "man",
-  "boy",
-  "toy",
-  "you",
-  "team",
-  "hulu",
-  "fork",
-  "lol",
-  "polar",
-  "angle",
-  "eva",
+  "Apple",
+  "Cat",
+  "Tree",
+  "House",
+  "Sun",
+  "Flower",
+  "Smile",
+  "Car",
+  "Book",
+  "Clock",
+  "Star",
+  "Cake",
+  "Hat",
+  "Fish",
+  "Chair",
+  "Moon",
+  "Boat",
+  "Duck",
+  "Robot",
+  "Key",
+  "Ball",
+  "Bird",
+  "Cloud",
+  "Turtle",
+  "Plane",
+  "Banana",
+  "Spider",
+  "Mountain",
+  "Snail",
+  "Chair",
+  "Snake",
+  "Ice cream",
+  "Rabbit",
+  "Sunflower",
+  "Ship",
+  "Pizza",
+  "Butterfly",
+  "Treehouse",
+  "Bee",
+  "Truck",
+  "Guitar",
+  "Dolphin",
+  "Elephant",
+  "Rocket",
+  "Penguin",
+  "Candy",
+  "Rocket",
+  "Rainbow",
+  "Palm tree",
+  "Cookie",
+  "Cupcake",
+  "Robot",
+  "Cactus",
+  "Umbrella",
+  "Spider web",
+  "Ant",
+  "Watermelon",
+  "Television",
+  "Teddy bear",
+  "Dragonfly",
+  "Helicopter",
+  "Snowman",
+  "Ghost",
+  "Spider",
+  "Lighthouse",
+  "Balloon",
+  "Donut",
+  "Owl",
+  "Beehive",
+  "Rocket ship",
+  "Fishbowl",
+  "Pineapple",
+  "Sunglasses",
+  "Waterfall",
+  "Bicycle",
+  "Bat",
+  "Lemon",
+  "Horse",
+  "Ice cream cone",
+  "Rainbow",
+  "Palm tree",
+  "Flower pot",
+  "Kangaroo",
+  "Lion",
+  "Elephant",
+  "Giraffe",
+  "Penguin",
+  "Kangaroo",
+  "Jellyfish",
+  "Koala",
+  "UFO",
+  "Watering can",
+  "Lobster",
+  "Octopus",
+  "Robot",
+  "Hamburger",
+  "Rocket",
+  "Soccer ball",
+  "Helicopter",
+  "Submarine"
 ];
+
 var scoreData={};
 function randomWord() {
   var i = Math.floor(Math.random() * guessWord.length);
@@ -212,10 +298,11 @@ async function startGame(obj) {
             clearInterval(timerDecrease);
             resolve();
           }
-          // if(scoreData.length==obj.players.length-1){
-          //   clearInterval(timerDecrease);
-          //   resolve();
-          // }
+          
+          if(scoreData.length==obj.players.length-1){
+            clearInterval(timerDecrease);
+            resolve();
+          }
           console.log(obj.gameData.CurrentTime);
         }, 1000);
       });
@@ -238,6 +325,7 @@ async function startGame(obj) {
   obj.gameData.status = "Finished";
   emitPhaseChange("finished");
   endGameEmit(obj.gameData.roomNo);
+
 }
 
 function endGameEmit(room){
@@ -324,6 +412,7 @@ function adminChange(gameObj,room,minActivePlayer){
     gameObj.gameData.admin_name = nextAdmin.user;
     startGameSocket(gameObj,room,gameObj.admin.id);
     addLobbySocket(gameObj.admin.id,room);
+    addKickMuteSocket(gameObj,room,gameObj.admin.id)
     io.to(room).emit("game_data",game[room].gameData);
   }
   else{
@@ -354,6 +443,19 @@ function replaceWordsWithAsterisks(inputString) {
   }
 }
 
+function addKickMuteSocket(gameObj,room,userSocket){
+  userSocket.on("kick",(data)=>{
+    gameObj.players.map((ele)=>{
+        if(ele.user==data) ele.id.emit("kicked");
+    })
+  })
+  userSocket.on("mute",(data)=>{
+      gameObj.muteList.push(data);
+      console.log("added into mute list");
+      console.log(gameObj.muteList);
+  })
+}
+
 // Example usage:
 
 
@@ -370,6 +472,7 @@ io.on("connection", (socket) => {
       players: [{ user: data.user, id: socket ,active:true}],
       admin: { user: data.user, id: socket },
       word: "09sdfsvclks2111ik",
+      muteList:[],
       gameData: {
         player_names: {},
         activePlayers:1,
@@ -393,6 +496,8 @@ io.on("connection", (socket) => {
     socket.emit("game_data", game[rm].gameData); //emitting game data to move to lobby
     //adding listner to those sockets
     startGameSocket(game[rm],rm,socket);
+    addKickMuteSocket(game[rm],rm,socket);
+  
     addLobbySocket(socket,rm); 
     disconnectSocket(game[rm],rm,data.user,socket);
     //console.log(game[rm]);
@@ -483,11 +588,19 @@ io.on("connection", (socket) => {
           var warning = "Don't Abuse, You'll get restricted"
           var safeMessage = replaceWordsWithAsterisks(data.message).updated;
           socket.emit("receive_message",{message:warning,room:data.room,user:"game police",check:2});
-          socket.emit("receive_message",{message:safeMessage,room:data.room,user:"game police",check:2});
+          socket.emit("receive_message",{message:safeMessage,room:data.room,user:data.user,check:2});
+          if(!(game[data.room].muteList.includes(data.user))){
+            socket.to(data.room).emit("receive_message",{message:warning,room:data.room,user:"game police",check:2});
+            socket.to(data.room).emit("receive_message",{message:safeMessage,room:data.room,user:data.user,check:2});
+          }
+         
         }
       }
       else{
-        socket.to(data.room).emit("receive_message", { ...data, check });
+        if(!(game[data.room].muteList.includes(data.user))){
+          socket.to(data.room).emit("receive_message", { ...data, check });
+        }
+        
         socket.emit("receive_message", { ...data, check });
         console.log(check);
 
