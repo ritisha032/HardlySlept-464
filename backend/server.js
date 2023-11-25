@@ -417,13 +417,10 @@ io.on("connection", (socket) => {
         game[data.room].gameData.activePlayers++;
         if(playerNameObject[data.user]==undefined || playerNameObject[data.user].active==false) {
           socket.join(data.room);
-          playerArray.push({
-            user: data.user,
-            id: socket,
-            active:true,
-          });
+          
           if(data.user in playerNameObject){
             playerNameObject[data.user].active = true;
+            playerArray.map((ele)=> {if(ele.user==data.user){ele.active=true; ele.id=socket}});
           }
           else{
             playerNameObject[data.user] = {
@@ -433,6 +430,11 @@ io.on("connection", (socket) => {
               restrict_count:0,
               mute:false 
             };
+            playerArray.push({
+              user: data.user,
+              id: socket,
+              active:true,
+            });
           }
           console.log("adding the new player");
           console.log(playerNameObject);
