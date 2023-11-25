@@ -298,11 +298,10 @@ async function startGame(obj) {
             clearInterval(timerDecrease);
             resolve();
           }
-          
-          if(scoreData.length==obj.players.length-1){
-            clearInterval(timerDecrease);
-            resolve();
-          }
+          // if(scoreData.length==obj.players.length-1){
+          //   clearInterval(timerDecrease);
+          //   resolve();
+          // }
           console.log(obj.gameData.CurrentTime);
         }, 1000);
       });
