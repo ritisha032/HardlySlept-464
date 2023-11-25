@@ -5,24 +5,30 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import SocketContext from "../../context/SocketContext";
 const LeaveButton = () => {
-  const {game,setGame} = useContext(GameContext);
-  const {socket,setSocket} = useContext(SocketContext);
-  const navigate=useNavigate();
-  useEffect(()=>{
-    if(game==null){
+  const { game, setGame } = useContext(GameContext);
+  const { socket, setSocket } = useContext(SocketContext);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (game == null) {
       navigate("/HomePage");
     }
-  },[game])
+  }, [game]);
 
-  
-  function backToHomePage(){
+  function backToHomePage() {
     setGame(null);
     socket.disconnect();
   }
 
   return (
     <div>
-      <button className="leave-btn" onClick={backToHomePage}>Leave</button>
+      <button
+        className="leave-btn"
+        onClick={() => {
+          backToHomePage();
+        }}
+      >
+        Leave
+      </button>
     </div>
   );
 };

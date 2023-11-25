@@ -84,23 +84,40 @@ function Game() {
               <Timer time={secondsLeft} />
             </div>
           </div>
-          <div className='game-words'>
-            {
-                (option.length!=0)?option.map((data,index)=>{
-                return <button onClick={()=>{sendChosenWord(data)}}>{data}</button>
-                }):<div></div>
-            }
+          <div className="game-words">
+            {option.length != 0 ? (
+              option.map((data, index) => {
+                return (
+                  <button
+                    onClick={() => {
+                      sendChosenWord(data);
+                    }}
+                  >
+                    {data}
+                  </button>
+                );
+              })
+            ) : (
+              <div></div>
+            )}
           </div>
-          <div className='game-hint'>{hint}</div>
-          <div className='game-logout'><Logout/><LeaveBtn/></div>
-      </div>
+          <div className="game-hint">{hint}</div>
+          <div className="game-logout">
+            <Logout />
+            <LeaveBtn />
+          </div>
+        </div>
 
         <div className="game-component">
-        <div className='game-leaderboard animated-div'>
-            {(score!=null)? Object.keys(game.player_names).map((data,index)=>{
-              if(score[data].active==true)
-            return <Player user={data} score={score[data]}/>
-            }):<></>}
+          <div className="game-leaderboard animated-div">
+            {score != null ? (
+              Object.keys(game.player_names).map((data, index) => {
+                if (score[data].active == true)
+                  return <Player user={data} score={score[data]} />;
+              })
+            ) : (
+              <></>
+            )}
           </div>
           <div className="game-drawCanvas animated-div">
             <DrawingCanvas />
@@ -110,13 +127,17 @@ function Game() {
           </div>
         </div>
       </div>
-      {/* {
-     (displayScore==true)?<div className="game-result animated-div">
-      <h3 className="result-heading">Final Score</h3>
-      <GameResult score={score}/>
-    </div>:<></>
-    } */}
-      {displayScore == true ? (
+
+      {phase == "finished" ? (
+        <div className="game-result animated-div">
+          <h3 className="result-heading">Final Score</h3>
+          <GameResult score={score} />
+        </div>
+      ) : (
+        <></>
+      )}
+
+      {displayScore == true && phase !== "finished" ? (
         <div className="round-result">
           <h3 className="result-heading">ScoreCard</h3>
           <RoundResult score={score} />
