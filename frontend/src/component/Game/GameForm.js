@@ -1,6 +1,7 @@
-import React, { useContext,useState } from 'react';
+import React, { useContext,useEffect,useState } from 'react';
 import GameContext from '../../context/GameContext'
 import SocketContext from '../../context/SocketContext'
+import { useAuth} from "../../context/auth";
 import  './gameForm.css'
 
 function GameForm() {
@@ -8,11 +9,38 @@ function GameForm() {
     const [duration,setDuration]=useState(30);
     const {game} = useContext(GameContext)
     const {socket} = useContext(SocketContext)
-
+    const [auth,setAuth]=useAuth('');
+    const [disabled,setDisabled] = useState("disabled");
     const startGame = () =>{
       socket.emit("start_game",{room : game.roomNo})
       console.log("fired start game")
     }
+
+    useEffect(()=>{
+     socket.on("lobby_round_emit",(data)=>{
+        setRounds(data);
+     }) 
+     socket.on("lobby_duration_emit",(data)=>{
+        setDuration(data);
+     })
+    })
+
+    useEffect(()=>{
+      socket.emit("lobby_round_emit",rounds);
+    },[rounds]);
+    
+    useEffect(()=>{
+      socket.emit("lobby_duration_emit",duration);
+    },[duration])
+
+    useEffect(()=>{
+      if(auth.user.username===game.admin_name)
+      setDisabled("");
+    },[game])
+ 
+     // document.getElementById("rounds").disabled = true;
+
+  
 
     return (
       <div className="gf-cont">
@@ -27,6 +55,7 @@ function GameForm() {
               className='gf-select'
               value={rounds}
               onChange={(e) =>setRounds(e.target.value)}
+              {...{disabled}}
             >
               <option>1</option>
               <option>2</option>
@@ -44,6 +73,7 @@ function GameForm() {
               className='gf-select'
               value={duration}
               onChange={(e) =>setDuration(e.target.value)}
+              {...{disabled}}
             >
               <option>30</option>
               <option>45</option>
@@ -53,7 +83,7 @@ function GameForm() {
             </select>
           </div>
       </form>
-      <button className="gf-start-btn" onClick={()=>{startGame()}}>Start Game</button>
+      {(disabled!=="disabled")?<button className="gf-start-btn" onClick={()=>{startGame()}}>Start Game</button>:<></>}
     </div> 
     );
 }

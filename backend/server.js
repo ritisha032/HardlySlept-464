@@ -90,6 +90,7 @@ async function startGame(obj) {
     //seding information to everyone that choosing is taking place
     obj.players[j].id.to(obj.gameData.roomNo).emit("drawer_change",{drawer:obj.gameData.drawer});
     obj.players[j].id.emit("drawer_change",{drawer:obj.gameData.drawer,options:options});
+    io.to(obj.gameData.roomNo).emit("game_data",obj.gameData);
   }
 
   function addThreeWords(options){
@@ -134,7 +135,6 @@ async function startGame(obj) {
       }
       const CanvasListener = (data) =>{
         obj.players[j].id.to(obj.gameData.roomNo).emit("receive_canvas_data",data);
-        console.log("inside listener for canvas");
       }
       obj.players[j].id.on("send_canvas_data",CanvasListener);
       //attaching listener to see if the drawer leaves 
@@ -273,6 +273,17 @@ function startGameSocket(gameObj,room,userSocket){
 });
 }
 
+function addLobbySocket(userSocket,room){
+  userSocket.on("lobby_round_emit",(data)=>{
+    game[room].gameData.TotalRounds=data;
+    userSocket.to(room).emit("lobby_round_emit",data)
+ }) 
+ userSocket.on("lobby_duration_emit",(data)=>{
+    game[room].gameData.TotalTime=data;
+    userSocket.to(room).emit("lobby_duration_emit",data);
+ })
+}
+
 function disconnectSocket(gameObj,room,user,userSocket){
   userSocket.on("disconnect",()=>{
     console.log("disconnect fired");
@@ -307,11 +318,12 @@ function adminChange(gameObj,room,minActivePlayer){
     const foundActive = player_namesArray.find((ele) => gameObj.gameData.player_names[ele].active == true);
     const playersArray = gameObj.players;
     const nextAdmin = playersArray.find((ele)=> ele.user==foundActive);
+    console.log(nextAdmin);
     gameObj.admin.user = nextAdmin.user;
     gameObj.admin.id = nextAdmin.id;
     gameObj.gameData.admin_name = nextAdmin.user;
     startGameSocket(gameObj,room,gameObj.admin.id);
-
+    addLobbySocket(gameObj.admin.id,room);
     io.to(room).emit("game_data",game[room].gameData);
   }
   else{
@@ -380,7 +392,8 @@ io.on("connection", (socket) => {
     game[rm].gameData.player_names[data.user] = { active: true, score: 0, roundScore:0, restrict_count:0, mute:false };
     socket.emit("game_data", game[rm].gameData); //emitting game data to move to lobby
     //adding listner to those sockets
-    startGameSocket(game[rm],rm,socket); 
+    startGameSocket(game[rm],rm,socket);
+    addLobbySocket(socket,rm); 
     disconnectSocket(game[rm],rm,data.user,socket);
     //console.log(game[rm]);
 
@@ -404,22 +417,24 @@ io.on("connection", (socket) => {
         game[data.room].gameData.activePlayers++;
         if(playerNameObject[data.user]==undefined || playerNameObject[data.user].active==false) {
           socket.join(data.room);
-          playerArray.push({
-            user: data.user,
-            id: socket,
-            active:true,
-            restrict_count:0,
-            mute:false 
-          });
+          
           if(data.user in playerNameObject){
             playerNameObject[data.user].active = true;
+            playerArray.map((ele)=> {if(ele.user==data.user){ele.active=true; ele.id=socket}});
           }
           else{
             playerNameObject[data.user] = {
               active: true,
               score: 0,
-              roundScore:0
+              roundScore:0,
+              restrict_count:0,
+              mute:false 
             };
+            playerArray.push({
+              user: data.user,
+              id: socket,
+              active:true,
+            });
           }
           console.log("adding the new player");
           console.log(playerNameObject);
@@ -453,7 +468,8 @@ io.on("connection", (socket) => {
       console.log(data.message + "==" + game[data.room].word);
       if (data.message.toLowerCase() === game[data.room].word.toLowerCase()){
         check = 1;
-        game[data.room].gameData.player_names[data.user].roundScore = Math.max(calculateScore(game[data.room].gameData.TotalTime,game[data.room].gameData.CurrentTime),game[data.room].gameData.player_names[data.user].roundScore);  
+        game[data.room].gameData.player_names[data.user].roundScore = Math.max(calculateScore(game[data.room].gameData.TotalTime,game[data.room].gameData.CurrentTime),game[data.room].gameData.player_names[data.user].roundScore);
+        game[data.room].gameData.player_names[game[data.room].gameData.drawer].roundScore+=game[data.room].gameData.player_names[data.user].roundScore;
       }
       if(replaceWordsWithAsterisks(data.message).check==2){
         check=2;

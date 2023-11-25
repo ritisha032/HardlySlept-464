@@ -7,6 +7,9 @@ import {
 } from "react-share";
 import "./DrawingCanvas.css";
 import SocketContext from "../../context/SocketContext";
+import { useAuth} from "../../context/auth";
+import GameContext from '../../context/GameContext'
+
 
 //icons import
 import pencilIcon from "../Assets/pensil.svg";
@@ -44,6 +47,8 @@ const CanvasComponent = () => {
   const [startX, setStartX] = useState(0);
   const [startY, setStartY] = useState(0);
   const [URL, setURL] = useState("");
+  const [auth,setAuth]=useAuth('');
+  const {game,setGame} = useContext(GameContext);
   var i = 0;
   useEffect(() => {
     // console.log(canvasRef.current.toDataURL());
@@ -648,9 +653,10 @@ const CanvasComponent = () => {
         onMouseDown={startDrawing}
         onMouseMove={draw}
         onMouseUp={endDrawing}
+        disabled={(auth.user.username!==game.drawer)}
         // onMouseLeave={endDrawing}
       ></canvas>
-
+    {(auth.user.username===game.drawer)?
       <div className="tool-cont animated-div">
         <div onClick={PenButton}>
           <img src={pencilIcon} className="img" alt />
@@ -688,6 +694,7 @@ const CanvasComponent = () => {
           <img src={!isShare ? shareIcon : closeIcon} className="img"></img>
         </div>
       </div>
+      :<></>}
 
       {isShare ? (
         <div className="social-cont animated-div">

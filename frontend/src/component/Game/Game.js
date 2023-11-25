@@ -31,6 +31,7 @@ function Game() {
     socket.emit("word_chosen", { word: word });
     console.log(word);
     console.log("sendChosenWord");
+    setOption([]);
   }
 
   useEffect(() => {
@@ -83,39 +84,23 @@ function Game() {
               <Timer time={secondsLeft} />
             </div>
           </div>
-          <div className="game-words">
-            {option.length != 0 ? (
-              option.map((data, index) => {
-                return (
-                  <button
-                    onClick={() => {
-                      sendChosenWord(data);
-                    }}
-                  >
-                    {data}
-                  </button>
-                );
-              })
-            ) : (
-              <div></div>
-            )}
+          <div className='game-words'>
+            {
+                (option.length!=0)?option.map((data,index)=>{
+                return <button onClick={()=>{sendChosenWord(data)}}>{data}</button>
+                }):<div></div>
+            }
           </div>
-          <div className="game-hint">{hint}</div>
-          <div className="game-logout">
-            <Logout />
-            <LeaveBtn />
-          </div>
-        </div>
+          <div className='game-hint'>{hint}</div>
+          <div className='game-logout'><Logout/><LeaveBtn/></div>
+      </div>
 
         <div className="game-component">
-          <div className="game-leaderboard animated-div">
-            {score != null ? (
-              Object.keys(game.player_names).map((data, index) => {
-                return <Player user={data} score={score[data]} />;
-              })
-            ) : (
-              <></>
-            )}
+        <div className='game-leaderboard animated-div'>
+            {(score!=null)? Object.keys(game.player_names).map((data,index)=>{
+              if(score[data].active==true)
+            return <Player user={data} score={score[data]}/>
+            }):<></>}
           </div>
           <div className="game-drawCanvas animated-div">
             <DrawingCanvas />

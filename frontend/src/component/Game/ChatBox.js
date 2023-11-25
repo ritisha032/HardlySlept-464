@@ -36,8 +36,7 @@ function ChatBox(props) {
         <Message {...ele} index={index}/>
         )}
       </div >
-
-      <div className='send'>
+<div className='send'>
         <input 
           className='chat-msg-field'
           placeholder="Message..." 
@@ -45,8 +44,9 @@ function ChatBox(props) {
           setMessage(event.target.value);
         }}/>
 
-        <button className='chatSend-btn' onClick={sendMessage}>Send</button>
-      </div>
+        {(auth.user.username!==game.drawer)?<button className='chatSend-btn' onClick={sendMessage}>Send</button>:<></>}
+      </div>:<></>
+
     </div>
   )
 }
